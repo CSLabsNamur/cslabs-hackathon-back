@@ -1,6 +1,7 @@
 
 const body_parser = require('body-parser');
 const cookieSession = require('cookie-session');
+const cors = require('cors');
 const dotenv = require('dotenv');
 const express = require('express');
 const helmet = require('helmet');
@@ -25,6 +26,7 @@ if (process.env.SERVER_TEST !== 'success') {
 
 // Initialize the middleware
 
+app.use(cors()); // TODO: add origin
 app.use(helmet());
 app.use(cookieSession({
     name: 'session',
