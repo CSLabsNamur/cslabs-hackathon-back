@@ -26,7 +26,9 @@ if (process.env.SERVER_TEST !== 'success') {
 
 // Initialize the middleware
 
-app.use(cors()); // TODO: add origin
+app.use(cors({
+    credentials: true
+})); // TODO: add origin
 app.use(helmet());
 app.use(cookieSession({
     name: 'session',
