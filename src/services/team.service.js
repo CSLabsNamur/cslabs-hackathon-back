@@ -47,8 +47,6 @@ class TeamService {
             throw new Error('Failed to create the team.');
         }
 
-        team_creator.teamId = team.id;
-
         let token;
         try {
             token = await TeamService.generate_token(team);
@@ -59,10 +57,12 @@ class TeamService {
         // TODO: a transaction for data integrity
 
         try {
-            await team.save();
+            team = await team.save();
         } catch (err) {
             throw new Error('Failed to save the team.');
         }
+
+        team_creator.teamId = team.id;
 
         try {
             team_creator.save();
@@ -70,9 +70,11 @@ class TeamService {
             throw new Error('Failed to update the user.');
         }
 
-        const {id, name} = team;
+        console.log(team_creator);
 
-        return {id, name, token}
+        team.token = token;
+
+        return team;
     }
 }
 

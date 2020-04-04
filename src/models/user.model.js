@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
      * - lastName {String} The user's last name
      * - email {String} The user's email address
      * - password {String} The user's hashed password
-     * - teamId {Integer} The id of the user's team
+     * - teamId {?Integer} The id of the user's team
+     * - voteId {?Integer} The id of the team that the user votes for
      *
      * The password is automatically encrypted.
      * Each bulk creation or update must force individual hooks.
@@ -63,6 +64,14 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'teams',
                 key: 'id'
             }
+        },
+        voteId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'teams',
+                key: 'id'
+            }
         }
     }, {
         // Options about the model
@@ -72,7 +81,14 @@ module.exports = (sequelize, DataTypes) => {
                 unique: true,
                 fields: ['email']
             }
-        ]
+        ],
+        validate: {
+            differentThanTeam() {
+                if (this.voteId && this.voteId === this.teamId) {
+                    throw new Error('Voting for its own team is forbidden.');
+                }
+            }
+        }
     });
 
     // Individual before creation hook

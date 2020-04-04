@@ -15,11 +15,6 @@ router.get('/', async (req, res, next) => {
     try {
         let users = await User.findAll({raw: true});
 
-        users = users.map(user => {
-            const {id, firstName, lastName, email} = user;
-            return {id, firstName, lastName, email};
-        });
-
         res.send(users);
     } catch (err) {
         next(new ResponseException('Failed to fetch the users.', 500));
@@ -48,6 +43,7 @@ router.post('/add', async (req, res, next) => {
 
         res.send({id: user.id, firstName, lastName, email});
     } catch (err) {
+        console.error(err);
         next(new ResponseException('Failed to add the user.', 400));
     }
 
@@ -78,6 +74,11 @@ router.post('/login', async (req, res, next) => {
         console.error(err);
         next(new ResponseException('Failed to fetch the user.', 500));
     }
+});
+
+router.post('/logout', auth, (req, res) => {
+    res.clearCookie('user_id');
+    res.send();
 });
 
 module.exports = router;
