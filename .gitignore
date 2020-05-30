@@ -6,3 +6,5 @@ node_modules/
 
 # Ignore dotenv file
 .env
+
+db.sqlite
