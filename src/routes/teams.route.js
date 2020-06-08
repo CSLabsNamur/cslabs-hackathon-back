@@ -8,7 +8,9 @@ const {User, Team} = require('../models/dao');
 
 const router = Router();
 
-// TODO: remove this route
+/**
+ * Get the team of the current user.
+ */
 router.get('/', async (req, res, next) => {
     try {
         const teams = await Team.findAll({raw: true});
@@ -143,7 +145,7 @@ router.post('/leave', auth, async (req, res, next) => {
 
 router.post('/create', auth, async (req, res, next) => {
 
-    const {team_name} = req.body;
+    const {team_name, description_name, idea, description_idea} = req.body;
 
     if (req.user.teamId) {
         return next(new ResponseException('The user have already a team.', 400));
@@ -152,7 +154,7 @@ router.post('/create', auth, async (req, res, next) => {
     let team;
 
     try {
-        team = await team_service.create_team(req.user, team_name);
+        team = await team_service.create_team(req.user, team_name,  description_name, idea, description_idea);
     } catch (err) {
         next(new ResponseException('Failed to create the team.', 400));
     }

@@ -18,6 +18,33 @@ module.exports = (sequelize, DataTypes) => {
                 notEmpty: true,
                 len: [3, 35]
             }
+        },
+        description_team: {
+            type: DataTypes.STRING(128),
+            allowNull: true,
+            unique: true,
+            validate: {
+                notEmpty: true,
+                len: [3, 128]
+            }
+        },
+        idea: {
+            type: DataTypes.STRING(35),
+            allowNull: true,
+            unique: false,
+            validate: {
+                notEmpty: true,
+                len: [3, 35]
+            }
+        },
+        description_idea: {
+            type: DataTypes.STRING(256),
+            allowNull: true,
+            unique: false,
+            validate: {
+                notEmpty: true,
+                len: [3, 256]
+            }
         }
     });
 };

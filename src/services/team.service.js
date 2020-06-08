@@ -1,7 +1,7 @@
 
-const {hash_data ,check_data} = require('./encryption.service');
+const { hash_data, check_data } = require('./encryption.service');
 
-const {Team} = require('../models/dao');
+const { Team } = require('../models/dao');
 
 class TeamService {
 
@@ -37,11 +37,16 @@ class TeamService {
         }
     }
 
-    static async create_team(team_creator, team_name) {
+    static async create_team(team_creator, team_name, description_name, idea, description_idea) {
 
         let team;
         try {
-            team = await Team.build({name: team_name});
+            team = await Team.build({
+                name: team_name,
+                description_name: description_name,
+                idea: idea,
+                description_idea: description_idea,
+            });
         } catch (err) {
             console.error(err);
             throw new Error('Failed to create the team.');
