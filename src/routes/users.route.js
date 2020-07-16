@@ -28,7 +28,7 @@ router.get('/:user_id', auth, async (req, res, next) => {
         next(new ResponseException('Wrong user id.', 400));
     } else {
         const { id, firstName, lastName, github, linkedin, email } = req.user;
-        res.send({ id, firstName, lastName, github, linkedin, email })
+        res.send({ id, firstName, lastName, github, linkedin, email });
     }
 });
 
@@ -78,28 +78,61 @@ router.post('/update', auth, async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
     const { email, password } = req.body;
+    const session_id = req.session.user_id;
 
     try {
-        let user = await User.findOne({
-            where: { email: email },
-            raw: true
-        });
 
-        if (!user) {
-            next(new ResponseException('The user does not exist.', 400));
-        } else if (!await user_service.check_password(user, password)) {
-            next(new ResponseException('Wrong password.', 400));
+        if (email && password) {
+
+            const user = await User.findOne({
+                where: { email: email },
+                raw: true
+            });
+
+            if (!user || !await user_service.check_password(user, password)) {
+                return next(new ResponseException('Wrong credentials.', 400));
+            } else {
+                req.session.user_id = user.id;
+
+                const {id, firstName, lastName, github, linkedin, email} = user;
+                res.send({
+                    id,
+                    firstName,
+                    lastName,
+                    github,
+                    linkedin,
+                    email
+                });
+            }
+
+        } else if (session_id) {
+
+            const user = await User.findOne({
+                where: { id: session_id },
+                raw: true
+            });
+
+            if (!user) {
+                return next(new ResponseException('Wrong session ID.', 500));
+            }
+
+            const {id, firstName, lastName, github, linkedin, email} = user;
+            res.send({
+                id,
+                firstName,
+                lastName,
+                github,
+                linkedin,
+                email
+            });
+
         } else {
-            req.session.user_id = user.id;
-
-            const { id, firstName, lastName, github, linkedin, email } = user;
-            user = { id, firstName, lastName, github, linkedin, email };
-
-            res.send(user);
+            return next(new ResponseException('Missing credentials.', 400));
         }
+
     } catch (err) {
         console.error(err);
-        next(new ResponseException('Failed to fetch the user.', 500));
+        return next(new ResponseException('Failed to fetch the user.', 500));
     }
 });
 

@@ -1,7 +1,8 @@
 
 const { hash_data, check_data } = require('./encryption.service');
 
-const { Team } = require('../models/dao');
+const dao = require('../models/dao');
+const { Team } = dao;
 
 class TeamService {
 
@@ -37,15 +38,15 @@ class TeamService {
         }
     }
 
-    static async create_team(team_creator, team_name, description_name, idea, description_idea) {
+    static async create_team(team_owner, name, description, idea) {
 
         let team;
+
         try {
             team = await Team.build({
-                name: team_name,
-                description_name: description_name,
-                idea: idea,
-                description_idea: description_idea,
+                name,
+                description,
+                idea
             });
         } catch (err) {
             console.error(err);
@@ -55,29 +56,29 @@ class TeamService {
         let token;
         try {
             token = await TeamService.generate_token(team);
+            team.token = token;
         } catch (err) {
             throw new Error('Failed to generate the token');
         }
 
-        // TODO: a transaction for data integrity
+        const transaction = await dao.getDatabase.createTransaction();
 
         try {
             team = await team.save();
         } catch (err) {
+            await transaction.rollback();
             throw new Error('Failed to save the team.');
         }
 
-        team_creator.teamId = team.id;
+        team_owner.teamId = team.id;
+        team_owner.teamOwner = true;
 
         try {
-            team_creator.save();
+            await team_owner.save();
         } catch (err) {
+            await transaction.rollback();
             throw new Error('Failed to update the user.');
         }
-
-        console.log(team_creator);
-
-        team.token = token;
 
         return team;
     }

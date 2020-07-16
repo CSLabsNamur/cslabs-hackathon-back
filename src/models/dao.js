@@ -10,6 +10,10 @@ class Dao {
         await db.init();
         await db.synchronize();
     }
+
+    static get getDatabase() {
+        return db;
+    }
 }
 
 module.exports = Dao;

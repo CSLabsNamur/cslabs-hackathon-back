@@ -145,7 +145,7 @@ router.post('/leave', auth, async (req, res, next) => {
 
 router.post('/create', auth, async (req, res, next) => {
 
-    const {team_name, description_name, idea, description_idea} = req.body;
+    const {name, description, idea} = req.body;
 
     if (req.user.teamId) {
         return next(new ResponseException('The user have already a team.', 400));
@@ -154,12 +154,12 @@ router.post('/create', auth, async (req, res, next) => {
     let team;
 
     try {
-        team = await team_service.create_team(req.user, team_name,  description_name, idea, description_idea);
+        team = await team_service.create_team(req.user, name,  description, idea);
     } catch (err) {
-        next(new ResponseException('Failed to create the team.', 400));
+        return next(new ResponseException('Failed to create the team.', 400));
     }
 
-    res.send({id: team.id, name: team.name, token: team.token});
+    res.send({id: team.id, name, description, idea, token: team.token});
 });
 
 module.exports = router;

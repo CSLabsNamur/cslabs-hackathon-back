@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         github: {
-            type: DataTypes.STRING(35),
+            type: DataTypes.STRING(256),
             allowNull: true,
             validate: {
                 notEmpty: true,
@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         linkedin: {
-            type: DataTypes.STRING(35),
+            type: DataTypes.STRING(256),
             allowNull: true,
             validate: {
                 notEmpty: true,
@@ -82,6 +82,11 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'teams',
                 key: 'id'
             }
+        },
+        teamOwner: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         },
         voteId: {
             type: DataTypes.INTEGER,

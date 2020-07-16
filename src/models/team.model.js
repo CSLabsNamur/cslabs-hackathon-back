@@ -19,8 +19,8 @@ module.exports = (sequelize, DataTypes) => {
                 len: [3, 35]
             }
         },
-        description_team: {
-            type: DataTypes.STRING(128),
+        description: {
+            type: DataTypes.STRING(256),
             allowNull: true,
             unique: true,
             validate: {
@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         idea: {
-            type: DataTypes.STRING(35),
+            type: DataTypes.STRING(256),
             allowNull: true,
             unique: false,
             validate: {
@@ -37,13 +37,12 @@ module.exports = (sequelize, DataTypes) => {
                 len: [3, 35]
             }
         },
-        description_idea: {
-            type: DataTypes.STRING(256),
-            allowNull: true,
-            unique: false,
+        token: {
+            type: DataTypes.STRING(80),
+            allowNull: false,
             validate: {
                 notEmpty: true,
-                len: [3, 256]
+                len: [80, 80]
             }
         }
     });

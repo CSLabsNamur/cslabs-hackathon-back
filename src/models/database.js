@@ -38,6 +38,14 @@ class Database {
         console.timeEnd('Database synchronization');
         console.groupEnd();
     }
+
+    static async createTransaction() {
+        try {
+            return await Database.sequelize.transaction();
+        } catch (err) {
+            throw new ConnectionException('Failed to create database transaction.');
+        }
+    }
 }
 
 // Set-up the database connection pool.
