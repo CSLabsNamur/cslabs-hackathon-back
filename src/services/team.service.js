@@ -1,4 +1,5 @@
 
+const { nanoid } = require('nanoid/async');
 const { hash_data, check_data } = require('./encryption.service');
 
 const dao = require('../models/dao');
@@ -6,59 +7,38 @@ const { Team } = dao;
 
 class TeamService {
 
-    static async generate_token(team) {
-        const clear_token = TeamService.get_clear_token(team);
-        const hash = await hash_data(clear_token);
-        const buff = new Buffer.from(hash);
-        return buff.toString('base64');
+    static async get_team_by_token(token) {
+        return await Team.findOne({where: {token: token}});
     }
 
-    static get_clear_token(team) {
-        const title = 'team-token';
-        return `${title}:${team.id}:${team.name}`;
-    }
+    static async generate_team_token() {
+        let token;
+        let team;
 
-    static async check_token(team, token) {
+        do {
+            token = await nanoid(20);
+            team = await this.get_team_by_token(token);
+        } while (team);
 
-        if (typeof token !== 'string') {
-            return false;
-        }
-
-        if (token.length > 1024) {
-            return false;
-        }
-
-        try {
-            const buff = new Buffer.from(token, 'base64');
-            const hash = buff.toString('utf-16');
-            const expected_token = TeamService.get_clear_token(team);
-            return await check_data(expected_token, hash);
-        } catch (err) {
-            throw new Error('Token checking failed.');
-        }
+        return token;
     }
 
     static async create_team(team_owner, name, description, idea) {
 
         let team;
 
+        const token = await this.generate_team_token()
+
         try {
             team = await Team.build({
                 name,
                 description,
-                idea
+                idea,
+                token
             });
         } catch (err) {
             console.error(err);
             throw new Error('Failed to create the team.');
-        }
-
-        let token;
-        try {
-            token = await TeamService.generate_token(team);
-            team.token = token;
-        } catch (err) {
-            throw new Error('Failed to generate the token');
         }
 
         const transaction = await dao.getDatabase.createTransaction();

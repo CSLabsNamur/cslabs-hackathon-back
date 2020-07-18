@@ -14,7 +14,7 @@ module.exports = async (req, res, next) => {
     });
 
     if (!user) {
-        return next(new ResponseException('Wrong authentication identifier.', 500));
+        return next(new ResponseException('Authentication failed.', 500));
     }
 
     req.user = user;

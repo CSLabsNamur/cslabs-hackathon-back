@@ -1,4 +1,3 @@
-
 const {Router} = require('express');
 
 const ResponseException = require('../exceptions/ResponseException');
@@ -21,10 +20,11 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.get('/:team_id', auth, async (req, res, next) => {
-    const {team_id} = req.params;
+router.get('/me', auth, async (req, res, next) => {
 
-    if (!req.user.teamId) {
+    const team_id = req.user.teamId;
+
+    if (!team_id) {
         return res.send({});
     }
 
@@ -33,11 +33,7 @@ router.get('/:team_id', auth, async (req, res, next) => {
     try {
         team = await Team.findOne({where: {id: req.user.teamId}});
     } catch (err) {
-        next(new ResponseException('Failed to fetch the user\'s team.', 500));
-    }
-
-    if (team.id.toString() !== team_id) {
-        return next(new ResponseException('Wrong team id.', 400));
+        return next(new ResponseException('Failed to fetch the user\'s team.', 500));
     }
 
     let team_members;
@@ -52,7 +48,7 @@ router.get('/:team_id', auth, async (req, res, next) => {
             }
         });
     } catch (err) {
-        next(new ResponseException('Failed to fetch the members of the team.', 500));
+        return next(new ResponseException('Failed to fetch the members of the team.', 500));
     }
 
     res.send({id: team.id, name: team.name, members: team_members});
@@ -90,12 +86,11 @@ router.post('/vote/:team_id', auth, async (req, res, next) => {
     res.send({id: team_id, name: team.name});
 });
 
-router.post('/join/:team_id', auth, async (req, res, next) => {
+router.post('/join', auth, async (req, res, next) => {
     const {token} = req.body;
-    const {team_id} = req.params;
 
     if (req.user.teamId) {
-        return next(new ResponseException('User have already a team.', 400));
+        return next(new ResponseException('The user has already a team.', 400));
     }
 
     if (!token) {
@@ -104,36 +99,40 @@ router.post('/join/:team_id', auth, async (req, res, next) => {
 
     let team;
     try {
-        team = await Team.findOne({where: {id: team_id}});
+        team = await Team.findOne({where: {token: token}});
     } catch (err) {
-        return next(new ResponseException('Failed to find the team.', 400));
+        return next(new ResponseException('Failed to fetch the team.', 500));
     }
 
-    try {
-        if (!await team_service.check_token(team, token)) {
-            return next(new ResponseException('Wrong token.', 400));
-        }
-    } catch (err) {
-        return next(new ResponseException('Failed to check the token.', 500));
+    if (!team) {
+        return next(new ResponseException('Invalid token.', 400));
     }
 
     try {
         req.user.teamId = team.id;
-        req.user.save();
-        res.send({id: team_id, name: team.name});
+        req.user.teamOwner = false;
+        await req.user.save();
     } catch (err) {
         return next(new ResponseException('Failed to update the user team.', 500));
     }
+
+    res.send({
+        id: team.id,
+        name: team.name,
+        description: team.description,
+        idea: team.idea,
+    });
 });
 
 router.post('/leave', auth, async (req, res, next) => {
 
     if (!req.user.teamId) {
-        return next(new ResponseException('The user does not have any team.'))
+        return next(new ResponseException('The user does not have any team.', 400));
     }
 
     try {
         req.user.teamId = null;
+        req.user.teamOwner = false;
         req.user.voteId = null;
         req.user.save();
     } catch (err) {
@@ -141,6 +140,36 @@ router.post('/leave', auth, async (req, res, next) => {
     }
 
     res.send();
+});
+
+router.post('/update', auth, async (req, res, next) => {
+
+    const {name, description, idea} = req.body;
+    const team_id = req.user.teamId;
+
+    if (!team_id || !req.user.teamOwner) {
+        return next(new ResponseException('The user is not a team owner.', 400));
+    }
+
+    let team;
+
+    try {
+        team = await Team.findOne({where: {id: team_id}});
+    } catch (err) {
+        return next('Failed to fetch the team.', 500);
+    }
+
+    team.name = name;
+    team.description = description;
+    team.idea = idea;
+
+    try {
+        team.save();
+    } catch (err) {
+        return next('Wrong new values for the team.', 400);
+    }
+
+    res.send({id: team_id, name, description, idea, members: team.members});
 });
 
 router.post('/create', auth, async (req, res, next) => {
@@ -154,7 +183,7 @@ router.post('/create', auth, async (req, res, next) => {
     let team;
 
     try {
-        team = await team_service.create_team(req.user, name,  description, idea);
+        team = await team_service.create_team(req.user, name, description, idea);
     } catch (err) {
         return next(new ResponseException('Failed to create the team.', 400));
     }

@@ -38,11 +38,11 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         token: {
-            type: DataTypes.STRING(80),
+            type: DataTypes.STRING(20),
             allowNull: false,
             validate: {
                 notEmpty: true,
-                len: [80, 80]
+                len: [20, 20]
             }
         }
     });
