@@ -21,15 +21,16 @@ router.get('/', async (req, res, next) => {
 
 });
 
-router.get('/:user_id', auth, async (req, res, next) => {
-    const { user_id } = req.params;
-
-    if (req.user.id.toString() !== user_id) {
-        next(new ResponseException('Wrong user id.', 400));
-    } else {
-        const { id, firstName, lastName, github, linkedin, email } = req.user;
-        res.send({ id, firstName, lastName, github, linkedin, email });
-    }
+router.get('/me', auth, async (req, res, next) => {
+    const { id, firstName, lastName, github, linkedin, email } = req.user;
+    res.send({
+        id,
+        firstName,
+        lastName,
+        github,
+        linkedin,
+        email
+    });
 });
 
 router.post('/add', async (req, res, next) => {
@@ -48,27 +49,28 @@ router.post('/add', async (req, res, next) => {
 
 });
 
-router.post('/update', auth, async (req, res, next) => {
-    // const { user_id } = req.params;
-    const { firstName, lastName, github, linkedin, email } = req.body;
+router.post('/update/me', auth, async (req, res, next) => {
+    const { firstName, lastName, github, linkedin } = req.body;
 
     try {
-        let user = await User.findOne({
-            where: { email: email },
-            raw: false
-        });
+
+        const user = req.user;
 
         user.firstName = firstName;
         user.lastName = lastName;
-        user.github = github;
-        user.linkedin = linkedin;
-        // user.email = email;
-        user.save().then((wtf) => { console.log("youhou") });
-        console.log(user);
+        user.github = github.length > 0 ? github : null;
+        user.linkedin = linkedin.length > 0 ? linkedin : null;
 
-        // req.session.user_id = user.id;
+        await user.save();
 
-        res.send({ id: user.id, firstName, lastName, github, linkedin, email });
+        res.send({
+            id: user.id,
+            email: user.email,
+            firstName,
+            lastName,
+            github: github,
+            linkedin: linkedin
+        });
     } catch (err) {
         console.error(err);
         next(new ResponseException('Failed to update the user.', 400));
