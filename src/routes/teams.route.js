@@ -51,7 +51,13 @@ router.get('/me', auth, async (req, res, next) => {
         return next(new ResponseException('Failed to fetch the members of the team.', 500));
     }
 
-    res.send({id: team.id, name: team.name, members: team_members});
+    res.send({
+        id: team.id,
+        name: team.name,
+        description: team.description,
+        idea: team.idea,
+        members: team_members
+    });
 });
 
 router.post('/vote/:team_id', auth, async (req, res, next) => {
