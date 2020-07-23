@@ -3,6 +3,7 @@ const {Router} = require('express');
 const ResponseException = require('../exceptions/ResponseException');
 const auth = require('../middleware/authentication.handler');
 const team_service = require('../services/team.service');
+const user_service = require('../services/user.service');
 const {User, Team} = require('../models/dao');
 
 const router = Router();
@@ -12,9 +13,20 @@ const router = Router();
  */
 router.get('/', async (req, res, next) => {
     try {
-        const teams = await Team.findAll({raw: true});
+        let teams = await Team.findAll({raw: true});
 
-        res.send(teams);
+        teams = teams.map(async team => {
+            return {
+                ...team,
+                members:
+                    (await User.findAll({where: {teamId: team.id}, raw: true})).map(
+                        user => user_service.filter_public_data(user)
+                    )
+            }
+        });
+
+        const results = await Promise.all(teams);
+        res.send(results);
     } catch (err) {
         next(new ResponseException('Failed to fetch the users.', 500));
     }
