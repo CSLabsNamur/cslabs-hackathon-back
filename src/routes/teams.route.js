@@ -53,11 +53,7 @@ router.get('/me', auth, async (req, res, next) => {
     try {
         team_members = await User.findAll({where: {teamId: team.id}});
         team_members = team_members.map(member => {
-            return {
-                id: member.id,
-                firstName: member.firstName,
-                lastName: member.lastName
-            }
+            return user_service.filter_public_data(member);
         });
     } catch (err) {
         return next(new ResponseException('Failed to fetch the members of the team.', 500));
@@ -68,7 +64,8 @@ router.get('/me', auth, async (req, res, next) => {
         name: team.name,
         description: team.description,
         idea: team.idea,
-        members: team_members
+        members: team_members,
+        token: team.token
     });
 });
 
