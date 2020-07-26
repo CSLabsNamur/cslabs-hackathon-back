@@ -31,8 +31,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             validate: {
                 notEmpty: true,
-                isAlpha: true,
-                len: [3, 35]
+                len: [3, 35],
+                is: {
+                    args: /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/g,
+                    msg: 'Must be only letters',
+                }
             }
         },
         lastName: {
@@ -40,8 +43,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             validate: {
                 notEmpty: true,
-                isAlpha: true,
-                len: [3, 35]
+                len: [3, 35],
+                is: {
+                    args: /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/g,
+                    msg: 'Must be only letters',
+                }
             }
         },
         github: {
@@ -49,7 +55,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             validate: {
                 notEmpty: true,
-                // isAlpha: false,
                 len: [3, 35]
             }
         },
@@ -58,7 +63,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             validate: {
                 notEmpty: true,
-                // isAlpha: false,
                 len: [3, 35]
             }
         },
