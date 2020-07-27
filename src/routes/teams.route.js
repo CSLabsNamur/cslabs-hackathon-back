@@ -9,9 +9,9 @@ const {User, Team} = require('../models/dao');
 const router = Router();
 
 /**
- * Get the team of the current user.
+ * Get all the teams.
  */
-router.get('/', async (req, res, next) => {
+router.get('/', auth, async (req, res, next) => {
     try {
         let teams = await Team.findAll({raw: true});
 
@@ -28,10 +28,13 @@ router.get('/', async (req, res, next) => {
         const results = await Promise.all(teams);
         res.send(results);
     } catch (err) {
-        next(new ResponseException('Failed to fetch the users.', 500));
+        next(new ResponseException('Failed to fetch the teams.', 500));
     }
 });
 
+/**
+ * Get the team of the active user.
+ */
 router.get('/me', auth, async (req, res, next) => {
 
     const team_id = req.user.teamId;
@@ -101,6 +104,9 @@ router.post('/vote/:team_id', auth, async (req, res, next) => {
     res.send({id: team_id, name: team.name});
 });
 
+/**
+ * Make the active user joins a team from a specific token.
+ */
 router.post('/join', auth, async (req, res, next) => {
     const {token} = req.body;
 
@@ -139,24 +145,30 @@ router.post('/join', auth, async (req, res, next) => {
     });
 });
 
-router.post('/leave', auth, async (req, res, next) => {
+/**
+ * Remove a user from its team.
+ * The active user must be the team owner or the removed user.
+ * The team owner cannot leave its team.
+ */
+router.post('/leave/:user_id', auth, async (req, res, next) => {
 
-    if (!req.user.teamId) {
-        return next(new ResponseException('The user does not have any team.', 400));
-    }
+    const { user_id } = req.params;
+
+    let user;
 
     try {
-        req.user.teamId = null;
-        req.user.teamOwner = false;
-        req.user.voteId = null;
-        req.user.save();
+        user = await User.findOne({where: {id: user_id}});
+        await team_service.remove_user(req.user, user);
     } catch (err) {
-        return next(new ResponseException('Failed to update the user\'s team.', 500));
+        return next(new ResponseException('This user cannot be removed from the team.', 400));
     }
 
     res.send();
 });
 
+/**
+ * Update the active user's team.
+ */
 router.post('/update', auth, async (req, res, next) => {
 
     const {name, description, idea} = req.body;
@@ -187,18 +199,31 @@ router.post('/update', auth, async (req, res, next) => {
     res.send({id: team_id, name, description, idea, members: team.members});
 });
 
+/**
+ * Create a new team and make the active user its owner.
+ */
 router.post('/create', auth, async (req, res, next) => {
 
-    const {name, description, idea} = req.body;
+    const {name, description, idea, invitations} = req.body;
 
     if (req.user.teamId) {
         return next(new ResponseException('The user have already a team.', 400));
     }
 
+    if (!Array.isArray(invitations)) {
+        return next(new ResponseException('The invitations must be an array.', 400));
+    }
+
+    for (const invitation of invitations) {
+        if (typeof invitation !== 'string') {
+            return next(new ResponseException('Each invitations must be a string.', 400));
+        }
+    }
+
     let team;
 
     try {
-        team = await team_service.create_team(req.user, name, description, idea);
+        team = await team_service.create_team(req.user, name, description, idea, invitations);
     } catch (err) {
         return next(new ResponseException('Failed to create the team.', 400));
     }

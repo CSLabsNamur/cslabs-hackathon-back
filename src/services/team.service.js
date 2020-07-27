@@ -1,7 +1,7 @@
 
 const { nanoid } = require('nanoid/async');
-const { hash_data, check_data } = require('./encryption.service');
 
+const mail_service = require('./mail.service');
 const dao = require('../models/dao');
 const { Team } = dao;
 
@@ -23,7 +23,7 @@ class TeamService {
         return token;
     }
 
-    static async create_team(team_owner, name, description, idea) {
+    static async create_team(team_owner, name, description, idea, invitations) {
 
         let team;
 
@@ -60,7 +60,37 @@ class TeamService {
             throw new Error('Failed to update the user.');
         }
 
+        try {
+            const invitation_tasks = invitations.map(inv => TeamService.invite_user(team, inv));
+            await Promise.all(invitation_tasks);
+        } catch (err) {
+            throw new Error('Failed to send invitations.');
+        }
+
         return team;
+    }
+
+    static async invite_user(team, user_mail) {
+        console.log(`Invite <${user_mail}> to the team : [${team.name}].`);
+    }
+
+    static async remove_user(user, removed_user) {
+
+        if (!user.teamOwner && user.id !== removed_user.id) {
+            throw new Error('The user is not the team owner or the removed user.');
+        }
+
+        if (user.teamId !== removed_user.teamId) {
+            throw new Error('The removed user is not in the same team that the owner.');
+        }
+
+        if (removed_user.teamOwner) {
+            throw new Error('The removed user cannot be the team owner.');
+        }
+
+        removed_user.teamId = null;
+        removed_user.teamOwner = false;
+        await removed_user.save();
     }
 }
 
