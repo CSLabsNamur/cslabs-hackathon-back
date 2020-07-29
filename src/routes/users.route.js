@@ -21,16 +21,8 @@ router.get('/', async (req, res, next) => {
 
 });
 
-router.get('/me', auth, async (req, res, next) => {
-    const { id, firstName, lastName, github, linkedin, email } = req.user;
-    res.send({
-        id,
-        firstName,
-        lastName,
-        github,
-        linkedin,
-        email
-    });
+router.get('/me', auth, async (req, res) => {
+    res.send(user_service.filter_private_data(req.user));
 });
 
 router.post('/add', async (req, res, next) => {
@@ -41,7 +33,7 @@ router.post('/add', async (req, res, next) => {
 
         req.session.user_id = user.id;
 
-        res.send({ id: user.id, firstName, lastName, github, linkedin, email });
+        res.send(user_service.filter_private_data(user));
     } catch (err) {
         console.error(err);
         next(new ResponseException('Failed to add the user.', 400));
@@ -63,14 +55,7 @@ router.post('/update/me', auth, async (req, res, next) => {
 
         await user.save();
 
-        res.send({
-            id: user.id,
-            email: user.email,
-            firstName,
-            lastName,
-            github: github,
-            linkedin: linkedin
-        });
+        res.send(user_service.filter_private_data(user));
     } catch (err) {
         console.error(err);
         next(new ResponseException('Failed to update the user.', 400));
@@ -95,16 +80,7 @@ router.post('/login', async (req, res, next) => {
                 return next(new ResponseException('Wrong credentials.', 400));
             } else {
                 req.session.user_id = user.id;
-
-                const {id, firstName, lastName, github, linkedin, email} = user;
-                res.send({
-                    id,
-                    firstName,
-                    lastName,
-                    github,
-                    linkedin,
-                    email
-                });
+                res.send(user_service.filter_private_data(user));
             }
 
         } else if (session_id) {
@@ -117,16 +93,7 @@ router.post('/login', async (req, res, next) => {
             if (!user) {
                 return next(new ResponseException('Wrong session ID.', 500));
             }
-
-            const {id, firstName, lastName, github, linkedin, email} = user;
-            res.send({
-                id,
-                firstName,
-                lastName,
-                github,
-                linkedin,
-                email
-            });
+            res.send(user_service.filter_private_data(user));
 
         } else {
             return next(new ResponseException('Missing credentials.', 400));
