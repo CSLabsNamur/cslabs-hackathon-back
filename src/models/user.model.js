@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             validate: {
                 notEmpty: true,
-                len: [3, 35]
+                len: [3, 256]
             }
         },
         linkedin: {
@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             validate: {
                 notEmpty: true,
-                len: [3, 35]
+                len: [3, 256]
             }
         },
         email: {
@@ -118,26 +118,37 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
-    // Individual before creation hook
-    User.beforeCreate(async user => {
-
-        if (!user.password.length || user.password.length > 200) {
-            return Promise.reject('Invalid password.');
+    const validatePassword = password => {
+        if (typeof password !== 'string') {
+            throw new Error('Password is not a string.');
         }
 
+        if (password.length < 10) {
+            throw new Error('Password must be at least 10 characters.');
+        }
+
+        if (password.length > 200) {
+            throw new Error('Password must be maximum 200 characters.');
+        }
+    }
+
+    // Individual before creation hook
+    User.beforeCreate(async user => {
+        validatePassword(user.password);
         user.password = await hash_data(user.password);
+        user.email = user.email.toLowerCase();
     });
 
     // Individual before update hook
     User.beforeUpdate(async user => {
 
         if (user.changed('password')) {
-
-            if (!user.password.length || user.password.length > 200) {
-                return Promise.reject('Invalid password.');
-            }
-
+            validatePassword(user.password);
             user.password = await hash_data(user.password);
+        }
+
+        if (user.changed('email')) {
+            user.email = user.email.toLowerCase();
         }
     });
 
