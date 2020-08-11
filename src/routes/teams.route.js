@@ -37,6 +37,8 @@ router.get('/', auth, async (req, res, next) => {
  */
 router.get('/me', auth, async (req, res, next) => {
 
+    /** @namespace req.user **/
+
     const team_id = req.user.teamId;
 
     if (!team_id) {
@@ -56,7 +58,7 @@ router.get('/me', auth, async (req, res, next) => {
     try {
         team_members = await User.findAll({where: {teamId: team.id}});
         team_members = team_members.map(member => {
-            return user_service.filter_public_data(member);
+            return user_service.filter_teammates_data(member);
         });
     } catch (err) {
         return next(new ResponseException('Failed to fetch the members of the team.', 500));
@@ -68,19 +70,22 @@ router.get('/me', auth, async (req, res, next) => {
         description: team.description,
         idea: team.idea,
         members: team_members,
-        token: team.token
+        token: team.token,
+        valid: team.valid
     });
 });
 
 router.post('/vote/:team_id', auth, async (req, res, next) => {
     const {team_id} = req.params;
 
+    /** @namespace req.user **/
+
     if (!req.user.teamId) {
-        return next(ResponseException('It is required to be in a team for voting.', 400));
+        return next(new ResponseException('It is required to be in a team for voting.', 400));
     }
 
     if (req.user.teamId === team_id) {
-        return next(ResponseException('Voting for its own team is forbidden.', 400));
+        return next(new ResponseException('Voting for its own team is forbidden.', 400));
     }
 
     let team;
@@ -109,6 +114,8 @@ router.post('/vote/:team_id', auth, async (req, res, next) => {
  */
 router.post('/join', auth, async (req, res, next) => {
     const {token} = req.body;
+
+    /** @namespace req.user **/
 
     if (req.user.teamId) {
         return next(new ResponseException('The user has already a team.', 400));
@@ -154,6 +161,8 @@ router.post('/leave/:user_id', auth, async (req, res, next) => {
 
     const { user_id } = req.params;
 
+    /** @namespace req.user **/
+
     let user;
 
     try {
@@ -170,6 +179,8 @@ router.post('/leave/:user_id', auth, async (req, res, next) => {
  * Update the active user's team.
  */
 router.post('/update', auth, async (req, res, next) => {
+
+    /** @namespace req.user **/
 
     const {name, description, idea} = req.body;
     const team_id = req.user.teamId;
@@ -205,6 +216,8 @@ router.post('/update', auth, async (req, res, next) => {
 router.post('/create', auth, async (req, res, next) => {
 
     const {name, description, idea, invitations} = req.body;
+
+    /** @namespace req.user **/
 
     if (req.user.teamId) {
         return next(new ResponseException('The user have already a team.', 400));

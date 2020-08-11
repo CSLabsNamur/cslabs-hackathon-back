@@ -44,6 +44,11 @@ module.exports = (sequelize, DataTypes) => {
                 notEmpty: true,
                 len: [20, 20]
             }
+        },
+        valid: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     });
 };

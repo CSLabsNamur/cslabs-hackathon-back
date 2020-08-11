@@ -3,12 +3,20 @@ const { nanoid } = require('nanoid/async');
 
 const mail_service = require('./mail.service');
 const dao = require('../models/dao');
-const { Team } = dao;
+const { Team, User } = dao;
 
 class TeamService {
 
     static async get_team_by_token(token) {
         return await Team.findOne({where: {token: token}});
+    }
+
+    static async get_team_members(team) {
+        try {
+            return await User.findAll({where: {teamId: team.id}});
+        } catch (err) {
+            throw new Error('Failed to fetch the team members.');
+        }
     }
 
     static async generate_team_token() {
@@ -34,7 +42,8 @@ class TeamService {
                 name,
                 description,
                 idea,
-                token
+                token,
+                valid: team_owner.paid_caution
             });
         } catch (err) {
             console.error(err);
@@ -71,6 +80,9 @@ class TeamService {
     }
 
     static async invite_user(team, user_mail) {
+
+        await this.update_team_validity(team);
+
         console.log(`Invite <${user_mail}> to the team : [${team.name}].`);
     }
 
@@ -91,7 +103,58 @@ class TeamService {
         removed_user.teamId = null;
         removed_user.teamOwner = false;
         await removed_user.save();
+
+        let team;
+
+        try {
+            team = await Team.findOne({where: {id: user.id}});
+            await this.update_team_validity(team);
+        } catch (err) {
+            throw new Error('Failed to update the team validity.');
+        }
     }
+
+    static async update_team_validity(team, team_members) {
+
+        let members;
+
+        if (team_members) {
+            members = team_members;
+        } else {
+            members = await this.get_team_members(team);
+        }
+
+        const valid = members.some(user => user.paid_caution);
+
+        if (team.valid !== valid) {
+            try {
+                team.valid = valid;
+                await team.save();
+            } catch (err) {
+                throw new Error('Failed to update the team validity.');
+            }
+        }
+    }
+
+    static async remove_team(team) {
+        const members = this.get_team_members(team);
+
+        // Remove the members from the team.
+        await Promise.all(members.map(async member => {
+            member.teamId = null;
+            member.teamOwner = false;
+            await member.save();
+        }));
+
+        // Delete the team.
+        try {
+            await Team.destroy({where: {id: team.id}});
+        } catch (err) {
+            throw new Error('Failed to remove the team from the database.');
+        }
+
+    }
+
 }
 
 module.exports = TeamService;

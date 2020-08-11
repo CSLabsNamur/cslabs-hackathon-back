@@ -2,9 +2,11 @@ const { Router } = require('express');
 
 const ResponseException = require('../exceptions/ResponseException');
 const user_service = require('../services/user.service');
+const team_service = require('../services/team.service');
 const auth = require('../middleware/authentication.handler');
+const admin = require('../middleware/admin.handler');
 
-const { User } = require('../models/dao');
+const { User, Team } = require('../models/dao');
 
 const router = Router();
 
@@ -22,6 +24,9 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/me', auth, async (req, res) => {
+
+    /** @namespace req.user **/
+
     res.send(user_service.filter_private_data(req.user));
 });
 
@@ -43,6 +48,8 @@ router.post('/add', async (req, res, next) => {
 
 router.post('/update/me', auth, async (req, res, next) => {
     const { firstName, lastName, github, linkedin } = req.body;
+
+    /** @namespace req.user **/
 
     try {
 
@@ -107,6 +114,47 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/logout', auth, (req, res) => {
     res.clearCookie('user_id');
+    res.send();
+});
+
+router.post('/:user_id/caution', auth, admin, async (req, res, next) => {
+
+    const { user_id } = req.params;
+    const { paid } = req.body;
+
+    if (typeof paid !== 'boolean') {
+        return next(new ResponseException('Missing paid JSON value.', 400));
+    }
+
+    let user;
+
+    try {
+        user = await User.findOne({where: {id: user_id}});
+
+        if (!user) {
+            return next(new ResponseException('Invalid user id.', 400));
+        }
+    } catch (err) {
+        return next(new ResponseException('Server failed to fetch the user.', 500));
+    }
+
+    try {
+        if (user.paid_caution !== paid) {
+            user.paid_caution = paid;
+            await user.save();
+        }
+    } catch (err) {
+        return next(new ResponseException('Server failed to update the user.', 500));
+    }
+
+    let team;
+    try {
+        team = await Team.findOne({where: {id: user.teamId}});
+        await team_service.update_team_validity(team);
+    } catch (err) {
+        return next(new ResponseException('Server failed to update the team validity.', 500));
+    }
+
     res.send();
 });
 

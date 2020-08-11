@@ -99,6 +99,16 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'teams',
                 key: 'id'
             }
+        },
+        paid_caution: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
+        admin: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     }, {
         // Options about the model
