@@ -7,6 +7,10 @@ const { Team, User } = dao;
 
 class TeamService {
 
+    static filter_public_data({name, description, idea, members}) {
+        return {name, description, idea, members};
+    }
+
     static async get_team_by_token(token) {
         return await Team.findOne({where: {token: token}});
     }

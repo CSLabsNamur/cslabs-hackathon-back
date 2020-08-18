@@ -10,6 +10,7 @@ const router = Router();
 
 /**
  * Get all the teams.
+ * # TODO : send only valid and filtered teams
  */
 router.get('/', auth, async (req, res, next) => {
     try {
@@ -28,8 +29,32 @@ router.get('/', auth, async (req, res, next) => {
         const results = await Promise.all(teams);
         res.send(results);
     } catch (err) {
-        next(new ResponseException('Failed to fetch the teams.', 500));
+        return next(new ResponseException('Failed to fetch the teams.', 500));
     }
+});
+
+router.get('/info/:team_id', auth, async (req, res, next) => {
+
+    let team;
+
+    try {
+        team = await Team.findOne({where: {id: req.params.team_id}});
+    } catch (err) {
+        return next(new ResponseException('Failed to fetch the team.', 500));
+    }
+
+    if (!team) {
+        return next(new ResponseException('Wrong team id.', 400));
+    }
+
+    try {
+        const members = await team_service.get_team_members(team);
+        team.members = members.map(user_service.filter_public_data);
+    } catch (err) {
+        return next(new ResponseException('Failed to fetch the team members.', 500));
+    }
+
+    res.send(team_service.filter_public_data(team));
 });
 
 /**
