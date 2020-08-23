@@ -6,7 +6,6 @@ const router = Router();
 
 router.use((err, req, res, next) => {
     if (err instanceof ResponseException) {
-        console.log('TEST');
         console.error(err.message);
         res.status(err.status).send();
     } else {

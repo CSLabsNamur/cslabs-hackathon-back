@@ -4,7 +4,7 @@ const {User} = require('../models/dao');
 
 module.exports = async (req, res, next) => {
     const {user_id} = req.session;
-    console.log(`HELLO ${user_id} !`)
+
     if (!user_id) {
         return next(new ResponseException('User is not authenticated.', 400));
     }

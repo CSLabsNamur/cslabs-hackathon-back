@@ -50,6 +50,7 @@ class Database {
 
 // Set-up the database connection pool.
 Database.sequelize = new Sequelize({
+    logging: false,
     dialect: 'sqlite',
     storage: path.resolve('./data/db.sqlite')
 });

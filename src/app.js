@@ -1,7 +1,6 @@
 
 const body_parser = require('body-parser');
 const cookieSession = require('cookie-session');
-//const jwt = require('express-jwt');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const express = require('express');
@@ -27,8 +26,11 @@ if (process.env.SERVER_TEST !== 'success') {
 
 // Initialize the middleware
 
-var corsOptions = {
-    origin: ['http://localhost:8080', 'http://localhost:3000'],
+const corsOptions = {
+    origin: [
+        'http://localhost:8080',
+        'http://localhost:3000'
+    ],
     credentials: true
 }
 
@@ -39,13 +41,14 @@ app.use(cookieSession({
     resave: false,
     saveUninitialized: true,
     keys: ['secret_1', 'secret_2'],
-    maxAge: 2*3600*1000,
+    maxAge: 2*3600*1000, // 2 hours
     // secure: false // TODO: Set to true with HTTPS
     cookies: {
         expires: 600000
     }
 }));
-// app.use(jwt({ secret: 'shhhhhhared-secret'});
+
+// Enable the json http body parser
 app.use(body_parser.json());
 
 // Initialize the routes

@@ -10,16 +10,35 @@ const { User, Team } = require('../models/dao');
 
 const router = Router();
 
-// TODO: Remove this route
-router.get('/', async (req, res, next) => {
+router.get('/', auth, admin, async (req, res, next) => {
+
+    let users;
 
     try {
-        let users = await User.findAll({ raw: true });
-
-        res.send(users);
+        users = await User.findAll({ raw: true });
     } catch (err) {
         next(new ResponseException('Failed to fetch the users.', 500));
     }
+
+    users = users.map(async user => {
+
+        const team = await Team.findOne({where: {id: user.teamId}, raw: true});
+
+        return {
+            ...user_service.filter_private_data(user),
+            team: !!team ? {
+                name: team.name,
+                valid: team.valid
+            }: null
+        }
+    });
+
+    Promise.all(users).then(result => {
+        res.send(result);
+    }).catch(err => {
+        console.error(err);
+        next(new ResponseException('Failed to fetch the teams.', 500));
+    });
 
 });
 
@@ -150,12 +169,52 @@ router.post('/:user_id/caution', auth, admin, async (req, res, next) => {
     let team;
     try {
         team = await Team.findOne({where: {id: user.teamId}});
-        await team_service.update_team_validity(team);
+
+        if (team) {
+            await team_service.update_team_validity(team);
+        }
+
     } catch (err) {
+        console.log('TEST2');
         return next(new ResponseException('Server failed to update the team validity.', 500));
     }
 
     res.send();
+});
+
+router.post('/:user_id/delete', auth, admin, async (req, res, next) => {
+    
+    const {user_id} = req.params;
+    
+    let user;
+    
+    try {
+        user = await User.findOne({where: {id: user_id}});
+    } catch (err) {
+        return next(new ResponseException('Failed to fetch the user.', 500));
+    }
+
+    if (!user) {
+        return next(new ResponseException('Wrong user id.', 400));
+    }
+    
+    let team = null;
+
+    if (user.teamId) {
+        try {
+            team = await Team.findOne({where: {id: user.teamId}});
+        } catch (err) {
+            return next(new ResponseException('Failed to fetch the team.', 500));
+        }
+    }
+
+    try {
+        await user_service.remove_user(user, team);
+    } catch (err) {
+        return next(new ResponseException('Failed to delete the user.', 500));
+    }
+
+    res.send(user_service.filter_private_data(user));
 });
 
 module.exports = router;

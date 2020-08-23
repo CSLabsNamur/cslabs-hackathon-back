@@ -90,13 +90,13 @@ class TeamService {
         console.log(`Invite <${user_mail}> to the team : [${team.name}].`);
     }
 
-    static async remove_user(user, removed_user) {
+    static async remove_member(user, removed_user) {
 
-        if (!user.teamOwner && user.id !== removed_user.id) {
-            throw new Error('The user is not the team owner or the removed user.');
+        if (!user.teamOwner && user.id !== removed_user.id && !user.admin) {
+            throw new Error('The user is not the team owner or the removed user or an administrator.');
         }
 
-        if (user.teamId !== removed_user.teamId) {
+        if (!user.admin && (user.teamId !== removed_user.teamId)) {
             throw new Error('The removed user is not in the same team that the owner.');
         }
 

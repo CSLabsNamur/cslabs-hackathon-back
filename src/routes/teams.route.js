@@ -10,21 +10,22 @@ const router = Router();
 
 /**
  * Get all the teams.
- * # TODO : send only valid and filtered teams
  */
 router.get('/', auth, async (req, res, next) => {
     try {
         let teams = await Team.findAll({raw: true});
 
-        teams = teams.map(async team => {
-            return {
-                ...team,
-                members:
-                    (await User.findAll({where: {teamId: team.id}, raw: true})).map(
-                        user => user_service.filter_public_data(user)
-                    )
-            }
-        });
+        teams = teams
+            .filter(team => team.valid)
+            .map(async team => {
+                return {
+                    ...team,
+                    members:
+                        (await User.findAll({where: {teamId: team.id}, raw: true})).map(
+                            user => user_service.filter_public_data(user)
+                        )
+                }
+            });
 
         const results = await Promise.all(teams);
         res.send(results);
@@ -33,6 +34,9 @@ router.get('/', auth, async (req, res, next) => {
     }
 });
 
+/**
+ * Get the information about a specified team.
+ */
 router.get('/info/:team_id', auth, async (req, res, next) => {
 
     let team;
@@ -179,7 +183,7 @@ router.post('/join', auth, async (req, res, next) => {
 
 /**
  * Remove a user from its team.
- * The active user must be the team owner or the removed user.
+ * The active user must be the team owner or the removed user, or the active user is an administrator.
  * The team owner cannot leave its team.
  */
 router.post('/leave/:user_id', auth, async (req, res, next) => {
@@ -192,7 +196,7 @@ router.post('/leave/:user_id', auth, async (req, res, next) => {
 
     try {
         user = await User.findOne({where: {id: user_id}});
-        await team_service.remove_user(req.user, user);
+        await team_service.remove_member(req.user, user);
     } catch (err) {
         return next(new ResponseException('This user cannot be removed from the team.', 400));
     }
