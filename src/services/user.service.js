@@ -43,6 +43,14 @@ class UserService {
 
     static async remove_user(user, team) {
 
+        if (user.admin) {
+            throw new Error("Unable to delete administrator.");
+        }
+
+        if (user.teamOwner) {
+            throw new Error("Unable to delete team owner.");
+        }
+
         const transaction = await dao.getDatabase.createTransaction();
 
         try {
