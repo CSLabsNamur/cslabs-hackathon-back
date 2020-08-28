@@ -104,6 +104,48 @@ router.get('/me', auth, async (req, res, next) => {
     });
 });
 
+router.post('/invite/:team_id', auth, async (req, res, next) => {
+
+    const {team_id} = req.params;
+
+    /** @namespace req.user **/
+
+    if (!req.user.admin) {
+        if (!req.user.teamOwner) {
+            return next(new ResponseException('The user is not the owner of the team.', 400));
+        }
+        if (req.user.teamId.toString() !== team_id) {
+            return next(new ResponseException('The user is not a member of the team.', 400));
+        }
+    }
+
+    const {email} = req.body;
+
+    if (!email) {
+        return next(new ResponseException('Missing email for invitation.', 400));
+    }
+
+    let team;
+
+    try {
+        team = await Team.findOne({where: {id: team_id}});
+    } catch (err) {
+        return next(new ResponseException('Failed to fetch the team.', 500));
+    }
+
+    if (!team) {
+        return next(new ResponseException('Wrong team id.', 400));
+    }
+
+    try {
+        await team_service.invite_user(team, email);
+    } catch (err) {
+        return next(new ResponseException('Failed to send invitation.', 500));
+    }
+
+    res.send();
+});
+
 router.post('/vote/:team_id', auth, async (req, res, next) => {
     const {team_id} = req.params;
 

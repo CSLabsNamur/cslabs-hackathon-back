@@ -1,9 +1,8 @@
-
-const { nanoid } = require('nanoid/async');
+const {nanoid} = require('nanoid/async');
 
 const mail_service = require('./mail.service');
 const dao = require('../models/dao');
-const { Team, User } = dao;
+const {Team, User} = dao;
 
 class TeamService {
 
@@ -85,7 +84,73 @@ class TeamService {
 
     static async invite_user(team, user_mail) {
 
-        await this.update_team_validity(team);
+        const message_plain = `
+        Bienvenue à l’édition 2020 de notre Hackathon !
+        Site officiel : (lien vers le site officiel)
+        
+        Vous recevez ce mail car l’on vous envoyé une invitation à rejoindre une équipe :
+        -\tNom : ${team.name}
+        Vous pouvez rejoindre cette équipe en cliquant sur le lien (lien) ou en entrant le code d’invitation
+        dans la section « Mon équipe » de notre site.
+        
+        Code d’invitation : (code)
+        
+        ------------- Informations utiles
+        
+        Attention, il vous sera demandé de créer un compte avant de rejoindre l’équipe.
+        
+        Vous recevrez un mail de confirmation lorsque vous aurez rejoint l’équipe.
+        
+        Afin de confirmer votre participation il est nécessaire de payer la caution :
+        -\tMontant : 20€
+        -\tCompte : (compte caution)
+        -\tCommunication : (communication)
+        Votre équipe sera considérée participante lorsque celle-ci possédera au moins un membre confirmé.
+        
+        Une équipe possède au maximum 5 membres.`;
+
+        const message_html = `
+        <h2>Bienvenue à l’édition 2020 de notre Hackathon !</h1>
+        <h5>Site officiel : (lien vers le site)</h6>
+        
+        <p>Vous recevez ce mail car l’on vous envoyé une invitation à rejoindre une équipe :</p>
+        
+        <ul>
+        <li>Nom : ${team.name}</li>
+        </ul>
+        <p>Vous pouvez rejoindre cette équipe en cliquant sur le lien (lien) ou en entrant le code d’invitation
+        dans la section « Mon équipe » de notre site.</p>
+        <p>Code d’invitation : <strong>(le code)</strong></p>
+        
+        <hr/>
+        
+        <h3>Informations utiles</h3>
+        
+        <p>Attention, il vous sera demandé de créer un compte avant de rejoindre l’équipe.</p>
+        
+        <p>Vous recevrez un mail de confirmation lorsque vous aurez rejoint l’équipe.</p>
+        
+        <p>Afin de confirmer votre participation il est nécessaire de payer la caution :</p>
+        <ul>
+        <li>Montant : 20€</li>
+        <li>Compte : (compte caution)</li>
+        <li>Communication : (communication)</li>
+        </ul>
+        
+        <p>Votre équipe sera considérée participante lorsque celle-ci possédera au moins un membre confirmé.</p>
+        
+        <p>Une équipe possède au maximum 5 membres.</p>
+        `;
+
+        try {
+            await mail_service.sendMail(
+                user_mail,
+                'Invitation dans une équipe - Hackathon CSLabs',
+                message_html,
+                message_plain);
+        } catch (e) {
+            console.error(`Failed to send an email to: <${user_mail}>.`);
+        }
 
         console.log(`Invite <${user_mail}> to the team : [${team.name}].`);
     }
