@@ -315,4 +315,41 @@ router.post('/create', auth, async (req, res, next) => {
     res.send({id: team.id, name, description, idea, token: team.token});
 });
 
+router.post('/delete/:team_id', auth, async (req, res, next) => {
+
+    const {team_id} = req.params;
+
+    /** @namespace req.user **/
+
+    if (!req.user.admin) {
+        if (!req.user.teamOwner) {
+            return next(new ResponseException('The user is not the team owner.', 400));
+        }
+
+        if (req.user.teamId.toString() !== team_id) {
+            return next(new ResponseException('Wrong team id.', 400));
+        }
+    }
+
+    let team;
+
+    try {
+        team = await Team.findOne({where: {id: team_id}});
+    } catch (err) {
+        return next(new ResponseException('Failed to fetch the team.', 500));
+    }
+
+    if (!team) {
+        return next(new ResponseException('Wrong team id.', 400));
+    }
+
+    try {
+        await team_service.remove_team(team);
+    } catch (err) {
+        return next(new ResponseException(err.message, 500));
+    }
+
+    return team_service.filter_public_data(team);
+});
+
 module.exports = router;
