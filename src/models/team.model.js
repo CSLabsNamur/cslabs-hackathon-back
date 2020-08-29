@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             unique: true,
             validate: {
-                notEmpty: true,
-                len: [3, 256]
+                notEmpty: false,
+                len: [0, 256]
             }
         },
         idea: {
@@ -33,8 +33,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             unique: false,
             validate: {
-                notEmpty: true,
-                len: [3, 256]
+                notEmpty: false,
+                len: [0, 256]
             }
         },
         token: {
