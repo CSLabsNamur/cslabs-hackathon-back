@@ -11,6 +11,8 @@ const routes = require('./routes');
 const dao = require('./models/dao');
 const error_handler = require('./middleware/error.handler');
 
+const mail_service = require('./services/mail.service');
+
 const PORT = 8080;
 dotenv.config();
 
@@ -62,6 +64,9 @@ async function start_server() {
     // Initialize the models
     await dao.init();
     console.info('Models properly initialized.');
+
+    await mail_service.initialize();
+    console.info('Mail service initialized.');
 
     // Run the server at the given port.
     await new Promise((resolve, reject) => {
