@@ -15,8 +15,10 @@ router.get('/', auth, async (req, res, next) => {
     try {
         let teams = await Team.findAll({raw: true});
 
+        /** @namespace req.user **/
+
         teams = teams
-            .filter(team => team.valid)
+            .filter(team => team.valid || req.user.admin)
             .map(async team => {
                 return {
                     ...team,
@@ -205,17 +207,27 @@ router.post('/leave/:user_id', auth, async (req, res, next) => {
 });
 
 /**
- * Update the active user's team.
+ * Update an user's team.
+ * The active user must be the team owner or an administrator.
  */
 router.post('/update', auth, async (req, res, next) => {
 
     /** @namespace req.user **/
 
     const {name, description, idea} = req.body;
-    const team_id = req.user.teamId;
+    let team_id;
 
-    if (!team_id || !req.user.teamOwner) {
-        return next(new ResponseException('The user is not a team owner.', 400));
+    // Check the team id and the user legitimacy.
+    if (req.user.admin) {
+        if (!req.body.id) {
+            return next(new ResponseException('The administrator must provides the team id in the request body.', 400));
+        }
+        team_id = req.body.id;
+    } else {
+        if (!req.user.teamId || !req.user.teamOwner) {
+            return next(new ResponseException('The user is not a team owner.', 400));
+        }
+        team_id = req.user.teamId;
     }
 
     let team;
@@ -231,9 +243,9 @@ router.post('/update', auth, async (req, res, next) => {
     team.idea = idea;
 
     try {
-        team.save();
+        await team.save();
     } catch (err) {
-        return next('Wrong new values for the team.', 400);
+        return next(new ResponseException('Validation failed for the new values.', 400));
     }
 
     res.send({id: team_id, name, description, idea, members: team.members});
