@@ -217,4 +217,75 @@ router.post('/:user_id/delete', auth, admin, async (req, res, next) => {
     res.send(user_service.filter_private_data(user));
 });
 
+router.post('/reset_password', async (req, res, next) => {
+
+    const {email} = req.body;
+
+    if (!email) {
+        return next(new ResponseException('Missing email.', 400));
+    }
+
+    if (typeof email !== 'string') {
+        return next(new ResponseException('Malformed email.', 400));
+    }
+
+    let user;
+    try {
+        user = await User.findOne({where: {email: email}})
+    } catch (err) {
+        return next(new ResponseException('Failed to fetch user.', 500));
+    }
+
+    if (!user) {
+        return next(new ResponseException('Invalid user email.', 400));
+    }
+
+    let token;
+    try {
+        token = await user_service.get_password_reset_token(user);
+    } catch (err) {
+        return next(new ResponseException('Failed to generate token.', 500));
+    }
+
+    // TODO : Send reset url by mail
+    res.send({token});
+});
+
+router.post('/change_password', async (req, res, next) => {
+
+    const {token, new_password} = req.body;
+
+    if (!token) {
+        return next(new ResponseException('Missing token.', 400));
+    }
+
+    if (typeof token !== 'string') {
+        return next(new ResponseException('Malformed token.', 400));
+    }
+
+    if (!new_password) {
+        return next(new ResponseException('Missing new password.', 400));
+    }
+
+    if (typeof new_password !== 'string') {
+        return next(new ResponseException('Malformed new password.', 400));
+    }
+
+    const user = await user_service.get_user_from_reset_password_token(token);
+
+    if (!user) {
+        return next(new ResponseException('Invalid token.', 400));
+    }
+
+    try {
+        user.password = new_password;
+        await user.save();
+    } catch (err) {
+        console.log(err.message);
+        return next(new ResponseException('Invalid new password.', 400));
+    }
+
+    res.send();
+});
+
 module.exports = router;
