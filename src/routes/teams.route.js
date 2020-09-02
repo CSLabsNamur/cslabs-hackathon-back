@@ -361,7 +361,7 @@ router.post('/delete/:team_id', auth, async (req, res, next) => {
         return next(new ResponseException(err.message, 500));
     }
 
-    return team_service.filter_public_data(team);
+    res.send(team_service.filter_public_data(team));
 });
 
 module.exports = router;

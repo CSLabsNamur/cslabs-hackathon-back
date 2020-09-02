@@ -208,7 +208,7 @@ class TeamService {
     }
 
     static async remove_team(team) {
-        const members = this.get_team_members(team);
+        const members = await this.get_team_members(team);
 
         // Remove the members from the team.
         await Promise.all(members.map(async member => {
