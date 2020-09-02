@@ -84,6 +84,8 @@ class TeamService {
 
     static async invite_user(team, user_mail) {
 
+        // TODO : Remplir les liens
+
         const message_plain = `
         Bienvenue à l’édition 2020 de notre Hackathon !
         Site officiel : (lien vers le site officiel)

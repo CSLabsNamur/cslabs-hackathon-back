@@ -175,7 +175,6 @@ router.post('/:user_id/caution', auth, admin, async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log('TEST2');
         return next(new ResponseException('Server failed to update the team validity.', 500));
     }
 
@@ -237,7 +236,8 @@ router.post('/reset_password', async (req, res, next) => {
     }
 
     if (!user) {
-        return next(new ResponseException('Invalid user email.', 400));
+        res.send();
+        return;
     }
 
     let token;
@@ -247,8 +247,12 @@ router.post('/reset_password', async (req, res, next) => {
         return next(new ResponseException('Failed to generate token.', 500));
     }
 
-    // TODO : Send reset url by mail
-    res.send({token});
+    try {
+        await user_service.send_reset_password_mail(user, token);
+        res.send();
+    } catch (err) {
+        return next(new ResponseException('Failed to send the mail.', 500));
+    }
 });
 
 router.post('/change_password', async (req, res, next) => {

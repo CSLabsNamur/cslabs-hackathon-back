@@ -6,8 +6,9 @@ const {
     str_to_base64
 } = require('./encryption.service');
 const team_service = require('./team.service');
+const mail_service = require('./mail.service');
 const dao = require('../models/dao');
-const { Team, User } = dao;
+const {User} = dao;
 
 class UserService {
 
@@ -126,6 +127,39 @@ class UserService {
         }
 
         return user;
+    }
+
+    static async send_reset_password_mail(user, token) {
+
+        const email = user.email.toString();
+
+        const message_plain = `
+        Une demande de réinitialisation de votre mot de passe a été faite sur votre compte.
+
+        Afin de poursuivre la procédure, veuillez suivre ce lien:
+        [${process.env.SERVER_PUBLIC_URL}/reset-password?token=${token}]
+        
+        Si cette demande n'est pas de vote initiative. Veuillez prendre contact avec l'administration du site.
+        `;
+
+        const message_html = `
+        <h3>Une demande de réinitialisation de votre mot de passe a été faite sur votre compte.</h3>
+
+        <p>
+            Afin de poursuivre la procédure, veuillez suivre ce lien:
+            <a href="${process.env.SERVER_PUBLIC_URL}/reset-password?token=${token}">
+            ${process.env.SERVER_PUBLIC_URL}/reset-password?token=${token}
+            </a>
+        </p>
+        
+        <p>Si cette demande n'est pas de vote initiative. Veuillez prendre contact avec l'administration du site.</p>
+        `;
+
+        await mail_service.sendMail(
+            email,
+            'Réinitialisation de mot de passe - Hackathon CSLabs',
+            message_html,
+            message_plain);
     }
 
     static async _decode_password_reset_token(token) {
