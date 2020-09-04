@@ -89,18 +89,17 @@ class TeamService {
 
     static async invite_user(team, user_mail) {
 
-        // TODO : Remplir les liens
-
         const message_plain = `
         Bienvenue à l’édition 2020 de notre Hackathon !
-        Site officiel : (lien vers le site officiel)
+        Site officiel : ${process.env.SERVER_PUBLIC_URL}
         
-        Vous recevez ce mail car l’on vous envoyé une invitation à rejoindre une équipe :
+        Vous recevez ce mail car l’on vous a envoyé une invitation à rejoindre une équipe :
         -\tNom : ${team.name}
-        Vous pouvez rejoindre cette équipe en cliquant sur le lien (lien) ou en entrant le code d’invitation
+        Vous pouvez rejoindre cette équipe en cliquant sur
+        le lien [${process.env.SERVER_PUBLIC_URL}/team/invite/${team.token}] ou en entrant le code d’invitation
         dans la section « Mon équipe » de notre site.
         
-        Code d’invitation : (code)
+        Code d’invitation : ${team.token}
         
         ------------- Informations utiles
         
@@ -110,24 +109,26 @@ class TeamService {
         
         Afin de confirmer votre participation il est nécessaire de payer la caution :
         -\tMontant : 20€
-        -\tCompte : (compte caution)
-        -\tCommunication : (communication)
+        -\tCompte : ${process.env.SERVER_CAUTION_ACCOUNT}
+        -\tCommunication : NOM Prénom
         Votre équipe sera considérée participante lorsque celle-ci possédera au moins un membre confirmé.
         
         Une équipe possède au maximum 5 membres.`;
 
         const message_html = `
         <h2>Bienvenue à l’édition 2020 de notre Hackathon !</h1>
-        <h5>Site officiel : (lien vers le site)</h6>
+        <h5>Site officiel : <a href="${process.env.SERVER_PUBLIC_URL}">${process.env.SERVER_PUBLIC_URL}</a></h6>
         
-        <p>Vous recevez ce mail car l’on vous envoyé une invitation à rejoindre une équipe :</p>
+        <p>Vous recevez ce mail car l’on vous a envoyé une invitation à rejoindre une équipe :</p>
         
         <ul>
         <li>Nom : ${team.name}</li>
         </ul>
-        <p>Vous pouvez rejoindre cette équipe en cliquant sur le lien (lien) ou en entrant le code d’invitation
+        <p>Vous pouvez rejoindre cette équipe en cliquant sur
+        le <a href="${process.env.SERVER_PUBLIC_URL}/team/invite/${team.token}">lien</a> ou
+        en entrant le code d’invitation
         dans la section « Mon équipe » de notre site.</p>
-        <p>Code d’invitation : <strong>(le code)</strong></p>
+        <p>Code d’invitation : <strong>${team.token}</strong></p>
         
         <hr/>
         
@@ -140,8 +141,8 @@ class TeamService {
         <p>Afin de confirmer votre participation il est nécessaire de payer la caution :</p>
         <ul>
         <li>Montant : 20€</li>
-        <li>Compte : (compte caution)</li>
-        <li>Communication : (communication)</li>
+        <li>Compte : <b>${process.env.SERVER_CAUTION_ACCOUNT}</b></li>
+        <li>Communication : <b>NOM Prenom</b></li>
         </ul>
         
         <p>Votre équipe sera considérée participante lorsque celle-ci possédera au moins un membre confirmé.</p>

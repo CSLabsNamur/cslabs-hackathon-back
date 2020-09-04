@@ -30,13 +30,13 @@ if (process.env.SERVER_TEST !== 'success') {
 
 const corsOptions = {
     origin: [
-        'http://localhost:8080',
-        'http://localhost:3000'
+        process.env.SERVER_PUBLIC_URL,
+        process.env.SERVER_API_URL
     ],
     credentials: true
 }
 
-app.use(cors(corsOptions)); // TODO: add origin
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(cookieSession({
     name: 'session',
@@ -44,7 +44,7 @@ app.use(cookieSession({
     saveUninitialized: true,
     keys: ['secret_1', 'secret_2'],
     maxAge: 2*3600*1000, // 2 hours
-    // secure: false // TODO: Set to true with HTTPS
+    secure: true,
     cookies: {
         expires: 600000
     }
