@@ -59,6 +59,11 @@ class TeamService {
             team = await team.save();
         } catch (err) {
             await transaction.rollback();
+
+            if (err.errors) {
+                throw new Error(err.errors[0].message);
+            }
+
             throw new Error('Failed to save the team.');
         }
 

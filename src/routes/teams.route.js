@@ -287,6 +287,11 @@ router.post('/update', auth, async (req, res, next) => {
     try {
         await team.save();
     } catch (err) {
+
+        if (err.errors) {
+            return next(new ResponseException(err.errors[0].message, 400));
+        }
+
         return next(new ResponseException('Validation failed for the new values.', 400));
     }
 
@@ -321,7 +326,12 @@ router.post('/create', auth, async (req, res, next) => {
     try {
         team = await team_service.create_team(req.user, name, description, idea, invitations);
     } catch (err) {
-        return next(new ResponseException('Failed to create the team.', 400));
+
+        console.group(`Failed to create a team: <${name ? name.toString() : "unknown"}>.`);
+        console.log(`Validation error: ${err.message}`);
+        console.groupEnd();
+
+        return next(new ResponseException(err.message, 400));
     }
 
     res.send({id: team.id, name, description, idea, token: team.token});

@@ -57,10 +57,23 @@ router.post('/add', async (req, res, next) => {
 
         req.session.user_id = user.id;
 
+        console.log(`User added : #${user.id}.`);
+
         res.send(user_service.filter_private_data(user));
     } catch (err) {
-        console.error(err);
-        next(new ResponseException('Failed to add the user.', 400));
+        console.group(`Inscription invalide <${email ? email : "unknown"}>.`);
+
+        let error_message;
+
+        if (err.errors) {
+            error_message = err.errors[0].message;
+        } else {
+            error_message = err.message;
+        }
+
+        console.log(`Erreur de validation : ${error_message}.`);
+        console.groupEnd();
+        return next(new ResponseException(error_message, 400));
     }
 
 });

@@ -21,19 +21,17 @@ module.exports = (sequelize, DataTypes) => {
         },
         description: {
             type: DataTypes.STRING(256),
-            allowNull: true,
-            unique: true,
+            allowNull: false,
+            unique: false,
             validate: {
-                notEmpty: false,
                 len: [0, 256]
             }
         },
         idea: {
             type: DataTypes.STRING(256),
-            allowNull: true,
+            allowNull: false,
             unique: false,
             validate: {
-                notEmpty: false,
                 len: [0, 256]
             }
         },
