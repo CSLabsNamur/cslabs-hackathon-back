@@ -7,6 +7,8 @@ const express = require('express');
 const helmet = require('helmet');
 const http = require('http');
 
+dotenv.config();
+
 const routes = require('./routes');
 const dao = require('./models/dao');
 const error_handler = require('./middleware/error.handler');
@@ -14,7 +16,6 @@ const error_handler = require('./middleware/error.handler');
 const mail_service = require('./services/mail.service');
 
 const PORT = 8080;
-dotenv.config();
 
 const app = express();
 const server = http.createServer(app);

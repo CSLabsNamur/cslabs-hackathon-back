@@ -51,23 +51,23 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         github: {
-            type: DataTypes.STRING(256),
+            type: DataTypes.STRING(255),
             allowNull: true,
             validate: {
                 notEmpty: true,
-                len: [3, 256]
+                len: [3, 255]
             }
         },
         linkedin: {
-            type: DataTypes.STRING(256),
+            type: DataTypes.STRING(255),
             allowNull: true,
             validate: {
                 notEmpty: true,
-                len: [3, 256]
+                len: [3, 255]
             }
         },
         email: {
-            type: DataTypes.STRING(256),
+            type: DataTypes.STRING(255),
             unique: true,
             allowNull: false,
             validate: {

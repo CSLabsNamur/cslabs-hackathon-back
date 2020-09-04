@@ -20,19 +20,19 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         description: {
-            type: DataTypes.STRING(256),
+            type: DataTypes.STRING(255),
             allowNull: false,
             unique: false,
             validate: {
-                len: [0, 256]
+                len: [0, 255]
             }
         },
         idea: {
-            type: DataTypes.STRING(256),
+            type: DataTypes.STRING(255),
             allowNull: false,
             unique: false,
             validate: {
-                len: [0, 256]
+                len: [0, 255]
             }
         },
         token: {
