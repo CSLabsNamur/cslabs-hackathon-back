@@ -53,6 +53,9 @@ Database.sequelize = new Sequelize(
     process.env.SERVER_DB_USR,
     process.env.SERVER_DB_PASS, {
         dialect: 'mariadb',
+        dialectOptions: {
+            timezone: 'Etc/GMT+1'
+        },
         pool: {
             min: 0,
             max: 5,

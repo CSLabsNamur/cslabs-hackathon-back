@@ -142,7 +142,7 @@ class TeamService {
         <ul>
         <li>Montant : 20€</li>
         <li>Compte : <b>${process.env.SERVER_CAUTION_ACCOUNT}</b></li>
-        <li>Communication : <b>NOM Prenom</b></li>
+        <li>Communication : <b>NOM Prénom</b></li>
         </ul>
         
         <p>Votre équipe sera considérée participante lorsque celle-ci possédera au moins un membre confirmé.</p>
@@ -177,6 +177,10 @@ class TeamService {
             throw new Error('The removed user cannot be the team owner.');
         }
 
+        const team_id = removed_user.teamId;
+
+        const transaction = await dao.getDatabase.createTransaction();
+
         removed_user.teamId = null;
         removed_user.teamOwner = false;
         await removed_user.save();
@@ -184,14 +188,19 @@ class TeamService {
         let team;
 
         try {
-            team = await Team.findOne({where: {id: user.id}});
+            team = await Team.findOne({where: {id: team_id}});
             await this.update_team_validity(team);
         } catch (err) {
+            await transaction.rollback();
             throw new Error('Failed to update the team validity.');
         }
     }
 
     static async update_team_validity(team, team_members) {
+
+        if (!team) {
+            throw new Error('The team is a null variable.');
+        }
 
         let members;
 
