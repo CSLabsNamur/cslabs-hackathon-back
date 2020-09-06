@@ -43,12 +43,13 @@ app.use(cookieSession({
     name: 'session',
     resave: false,
     saveUninitialized: true,
-    keys: ['secret_1', 'secret_2'],
-    maxAge: 2*3600*1000, // 2 hours
-    secure: true,
-    cookies: {
-        expires: 600000
-    }
+    keys: [
+        process.env.SERVER_COOKIE_SECRET_1,
+        process.env.SERVER_COOKIE_SECRET_2
+    ],
+    maxAge: 24*3600*1000, // 1 day
+    secureProxy: true,
+    sameSite: 'strict'
 }));
 
 // Enable the json http body parser
