@@ -1,6 +1,5 @@
 
 // Import the libraries
-const path = require('path');
 const {Sequelize, DataTypes} = require('sequelize');
 
 // Import the exceptions
@@ -49,11 +48,26 @@ class Database {
 }
 
 // Set-up the database connection pool.
-Database.sequelize = new Sequelize({
-    logging: false,
-    dialect: 'sqlite',
-    storage: path.resolve('./data/db.sqlite')
-});
+Database.sequelize = new Sequelize(
+    process.env.SERVER_DB_NAME,
+    process.env.SERVER_DB_USR,
+    process.env.SERVER_DB_PASS, {
+        dialect: 'mariadb',
+        dialectOptions: {
+            timezone: 'Etc/GMT+1'
+        },
+        pool: {
+            min: 0,
+            max: 5,
+            idle: 10000
+        },
+        define: {
+            charset: 'utf8',
+            timestamps: false
+        },
+        benchmark: false,
+        logging: false
+    });
 
 // Set-up the available data types from sequelize.
 Database.DataTypes = DataTypes;
