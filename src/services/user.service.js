@@ -21,20 +21,33 @@ class UserService {
     }
 
     static filter_private_data({
+        id,
+        email,
+        firstName,
+        lastName,
+        github,
+        linkedin,
+        comment,
+        teamId,
+        teamOwner,
+        paid_caution,
+        admin,
+        createdAt
+    }) {
+
+        const user_data = {
             id,
             email,
             firstName,
             lastName,
             github,
             linkedin,
+            comment,
             teamId,
             teamOwner,
             paid_caution,
-            admin,
             createdAt
-        }) {
-
-        const user_data = {id, email, firstName, lastName, github, linkedin, teamId, teamOwner, paid_caution, createdAt}
+        }
 
         if (admin) {
             user_data.admin = admin;

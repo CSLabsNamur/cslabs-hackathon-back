@@ -63,7 +63,7 @@ Database.sequelize = new Sequelize(
         },
         define: {
             charset: 'utf8',
-            timestamps: false
+            timestamps: true
         },
         benchmark: false,
         logging: false

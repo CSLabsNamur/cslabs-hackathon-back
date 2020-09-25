@@ -50,10 +50,18 @@ router.get('/me', auth, async (req, res) => {
 });
 
 router.post('/add', async (req, res, next) => {
-    const { firstName, lastName, github, linkedin, email, password } = req.body;
+    const {
+        firstName,
+        lastName,
+        github,
+        linkedin,
+        email,
+        comment,
+        password
+    } = req.body;
 
     try {
-        const user = await User.create({ firstName, lastName, github, linkedin, email, password });
+        const user = await User.create({ firstName, lastName, github, linkedin, email, comment, password });
 
         req.session.user_id = user.id;
 
