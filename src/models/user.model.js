@@ -75,6 +75,13 @@ module.exports = (sequelize, DataTypes) => {
                 isEmail: true
             }
         },
+        comment: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+            validate: {
+                len: [0, 2048]
+            }
+        },
         password: {
             type: DataTypes.STRING,
             allowNull: false
