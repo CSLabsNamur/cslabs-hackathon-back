@@ -209,6 +209,17 @@ router.post('/join', auth, async (req, res, next) => {
         return next(new ResponseException('Invalid token.', 400));
     }
 
+    let members;
+    try {
+        members = await team_service.get_team_members(team);
+    } catch (err) {
+        return next(new ResponseException('Failed to fetch the team.', 500));
+    }
+
+    if (members.length > 3) {
+        return next(new ResponseException('The team is already full of members.', 400));
+    }
+
     try {
         req.user.teamId = team.id;
         req.user.teamOwner = false;

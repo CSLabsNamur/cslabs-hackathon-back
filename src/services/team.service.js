@@ -77,6 +77,11 @@ class TeamService {
             throw new Error('Failed to update the user.');
         }
 
+        if (invitations.length > 3) {
+            await transaction.rollback();
+            throw new Error('More than 3 invitations.');
+        }
+
         try {
             const invitation_tasks = invitations.map(inv => TeamService.invite_user(team, inv));
             await Promise.all(invitation_tasks);
