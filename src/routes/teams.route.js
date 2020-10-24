@@ -2,6 +2,7 @@ const {Router} = require('express');
 
 const ResponseException = require('../exceptions/ResponseException');
 const auth = require('../middleware/authentication.handler');
+const disabled_feature = require('../middleware/disabled-feature.handler');
 const team_service = require('../services/team.service');
 const user_service = require('../services/user.service');
 const {User, Team} = require('../models/dao');
@@ -106,7 +107,7 @@ router.get('/me', auth, async (req, res, next) => {
     });
 });
 
-router.post('/invite/:team_id', auth, async (req, res, next) => {
+router.post('/invite/:team_id', auth, disabled_feature, async (req, res, next) => {
 
     const {team_id} = req.params;
 
@@ -148,7 +149,7 @@ router.post('/invite/:team_id', auth, async (req, res, next) => {
     res.send();
 });
 
-router.post('/vote/:team_id', auth, async (req, res, next) => {
+router.post('/vote/:team_id', auth, disabled_feature,async (req, res, next) => {
     const {team_id} = req.params;
 
     /** @namespace req.user **/
@@ -185,7 +186,7 @@ router.post('/vote/:team_id', auth, async (req, res, next) => {
 /**
  * Make the active user joins a team from a specific token.
  */
-router.post('/join', auth, async (req, res, next) => {
+router.post('/join', auth, disabled_feature, async (req, res, next) => {
     const {token} = req.body;
 
     /** @namespace req.user **/
@@ -263,7 +264,7 @@ router.post('/leave/:user_id', auth, async (req, res, next) => {
  * Update an user's team.
  * The active user must be the team owner or an administrator.
  */
-router.post('/update', auth, async (req, res, next) => {
+router.post('/update', auth, disabled_feature, async (req, res, next) => {
 
     /** @namespace req.user **/
 
@@ -312,7 +313,7 @@ router.post('/update', auth, async (req, res, next) => {
 /**
  * Create a new team and make the active user its owner.
  */
-router.post('/create', auth, async (req, res, next) => {
+router.post('/create', auth, disabled_feature, async (req, res, next) => {
 
     const {name, description, idea, invitations} = req.body;
 

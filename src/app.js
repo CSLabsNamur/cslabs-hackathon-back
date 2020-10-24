@@ -31,8 +31,9 @@ if (process.env.SERVER_TEST !== 'success') {
 
 const corsOptions = {
     origin: [
-        process.env.SERVER_PUBLIC_URL,
-        process.env.SERVER_API_URL
+        //process.env.SERVER_PUBLIC_URL,
+        //process.env.SERVER_API_URL
+        "http://localhost:3000"
     ],
     credentials: true
 }

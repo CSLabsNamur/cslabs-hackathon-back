@@ -5,6 +5,7 @@ const user_service = require('../services/user.service');
 const team_service = require('../services/team.service');
 const auth = require('../middleware/authentication.handler');
 const admin = require('../middleware/admin.handler');
+const disabled_feature = require('../middleware/disabled-feature.handler');
 
 const { User, Team } = require('../models/dao');
 
@@ -49,7 +50,7 @@ router.get('/me', auth, async (req, res) => {
     res.send(user_service.filter_private_data(req.user));
 });
 
-router.post('/add', async (req, res, next) => {
+router.post('/add', disabled_feature, async (req, res, next) => {
     const {
         firstName,
         lastName,
