@@ -28,8 +28,14 @@ export class TeamsService {
     private readonly teamsRepository: Repository<Team>,
   ) {}
 
-  async getAll(): Promise<Team[]> {
-    return await this.teamsRepository.find({ relations: ['members'] });
+  async getAll(user: User): Promise<Team[] | PublicTeamInterface[]> {
+    let teams = await this.teamsRepository.find({ relations: ['members'] });
+
+    if (!user.isAdmin) {
+      return await Promise.all(teams.map(async (team) => this.filterPrivateInformation(team)));
+    }
+
+    return teams;
   }
 
   async getById(teamId: string): Promise<Team> {
@@ -126,6 +132,24 @@ export class TeamsService {
     return team;
   }
 
+  async forceLeave(userId: string, memberId: string): Promise<Team> {
+    if (userId === memberId) {
+      return await this.leave(userId);
+    }
+
+    const user = await this.usersService.getById(userId);
+    if (user.isAdmin) {
+      return await this.leave(memberId);
+    }
+
+    const member = await this.usersService.getById(memberId);
+    if (!user.isTeamOwner || user.team.id !== member.team.id) {
+      throw new HttpException('user has no authority to kick this team member.', HttpStatus.FORBIDDEN);
+    }
+
+    return await this.leave(memberId);
+  }
+
   async updateValidity(team: Team) {
     const valid =
       team.members.filter((member) => member.paidCaution).length > 0;
@@ -135,7 +159,7 @@ export class TeamsService {
   }
 
   async create(userID: string, teamData: CreateTeamDto): Promise<Team> {
-    const { name, description, idea } = teamData;
+    const { name, description, idea, invitations } = teamData;
     const user = await this.usersService.getById(userID);
     const team = await this.teamsRepository.create({
       name,
@@ -173,6 +197,14 @@ export class TeamsService {
     }
 
     await this.teamsRepository.save(team);
+
+    await Promise.all(invitations.map(async (email) => {
+      try {
+        await this.invite(user, email);
+      } catch {
+        // Ignore the case when an invitation failed.
+      }
+    }));
 
     return team;
   }

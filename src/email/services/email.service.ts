@@ -37,7 +37,7 @@ export class EmailService {
   async sendTeamInvitation(team: Team, newMemberEmail: string) {
     const domain = this.configService.get('FRONTEND_DOMAIN');
     const iban = this.configService.get('HACKATHON_IBAN');
-    const encodedToken = Buffer.from(team.token).toString('base64url');
+    const encodedToken = Buffer.from(team.token).toString('base64');
     const messagePlainText = `
         Bienvenue à l’édition 2021 de notre Hackathon !
         Site officiel : ${domain}
@@ -45,7 +45,7 @@ export class EmailService {
         Vous recevez ce mail car on vous a envoyé une invitation à rejoindre une équipe :
         -\tNom : ${team.name}
         Vous pouvez rejoindre cette équipe en cliquant sur
-        le lien [${domain}/team/invite/${encodedToken}] ou en entrant le code d’invitation
+        le lien [${domain}/team/join?token=${encodedToken}] ou en entrant le code d’invitation
         dans la section « Mon équipe » de notre site.
         
         Code d’invitation : ${encodedToken}

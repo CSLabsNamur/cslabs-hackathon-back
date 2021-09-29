@@ -24,7 +24,9 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
     private readonly usersService: UsersService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
+      jwtFromRequest: ExtractJwt.fromExtractors([(req) => {
+        return req.header('RefreshToken');
+      }]),
       secretOrKey: configService.get('JWT_REFRESH_TOKEN_SECRET'),
       passReqToCallback: true,
     });
@@ -37,7 +39,12 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
    * @return {User | null} - The user if the token was valid, otherwise null
    */
   async validate(request: Request, payload: TokenPayload) {
-    const refreshToken = request?.body?.refreshToken;
+    const refreshToken = request?.header('RefreshToken');
+
+    if (!refreshToken) {
+      return null;
+    }
+
     return this.usersService.getUserIfRefreshTokenMatches(
       payload.userId,
       refreshToken,

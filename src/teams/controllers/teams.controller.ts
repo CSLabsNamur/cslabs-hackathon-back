@@ -16,20 +16,19 @@ import { CreateTeamDto } from '../dto/create-team.dto';
 import { JwtAuthenticationGuard } from '../../authentication/guards/jwt-authentication.guard';
 import { RequestWithUser } from '../../authentication/request-with-user.interface';
 import { Team } from '../entities/team.entity';
-import { AdminGuard } from '../../authentication/guards/admin.guard';
 import { PublicTeamInterface } from '../public-team.interface';
 import { UpdateTeamDto } from '../dto/update-team.dto';
 import { InviteTeamDto } from '../dto/invite-team.dto';
+import {AdminGuard} from "../../authentication/guards/admin.guard";
 
 @Controller('teams')
 export class TeamsController {
   constructor(private readonly teamsService: TeamsService) {}
 
-  @UseGuards(AdminGuard)
   @UseGuards(JwtAuthenticationGuard)
   @Get()
-  async getAll(): Promise<Team[]> {
-    return await this.teamsService.getAll();
+  async getAll(@Req() request: RequestWithUser): Promise<Team[] | PublicTeamInterface[]> {
+    return await this.teamsService.getAll(request.user);
   }
 
   @UseGuards(JwtAuthenticationGuard)
@@ -80,6 +79,15 @@ export class TeamsController {
   @Post('leave')
   async leave(@Req() request: RequestWithUser) {
     return await this.teamsService.leave(request.user.id);
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Post('leave/:userId')
+  async forceLeave(
+    @Req() request: RequestWithUser,
+    @Param('userId') userId: string,
+  ) {
+    return await this.teamsService.forceLeave(request.user.id, userId);
   }
 
   @UseGuards(JwtAuthenticationGuard)

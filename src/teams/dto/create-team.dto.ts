@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import {ArrayMaxSize, IsNotEmpty, IsString, MaxLength, MinLength} from 'class-validator';
 
 export class CreateTeamDto {
   @IsString()
@@ -14,4 +14,8 @@ export class CreateTeamDto {
   @IsString()
   @MaxLength(1024)
   idea: string;
+
+  @IsString({each: true})
+  @ArrayMaxSize(3)
+  invitations: string[];
 }

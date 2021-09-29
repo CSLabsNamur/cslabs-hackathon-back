@@ -35,13 +35,20 @@ export class UsersService {
   async getByEmail(email: string): Promise<User> {
     const user = await this.usersRepository.findOne(
       { email },
-      { relations: ['team'] },
+      { relations: ['team', 'team.members'] },
     );
     if (!user) {
       throw new HttpException(
         'User with this email does not exist.',
         HttpStatus.NOT_FOUND,
       );
+    }
+
+    const members = user.team?.members;
+    if (members) {
+      user.team.members = await Promise.all(members.map(
+        async (member) => await this.filterPrivateInformation(member) as User
+      ))
     }
 
     return user;
@@ -54,7 +61,7 @@ export class UsersService {
   async getById(id: string): Promise<User> {
     const user = await this.usersRepository.findOne(
       { id },
-      { relations: ['team'] },
+      { relations: ['team', 'team.members'] },
     );
     if (!user) {
       throw new HttpException(
@@ -62,6 +69,14 @@ export class UsersService {
         HttpStatus.NOT_FOUND,
       );
     }
+
+    const members = user.team?.members;
+    if (members) {
+      user.team.members = await Promise.all(members.map(
+        async (member) => await this.filterPrivateInformation(member) as User
+      ))
+    }
+
     return user;
   }
 
@@ -126,7 +141,7 @@ export class UsersService {
       throw new HttpException('team is full.', HttpStatus.BAD_REQUEST);
     }
     await this.usersRepository.update(user.id, { team });
-    return team;
+    return await this.teamsService.getById(team.id);
   }
 
   async removeTeam(user: User) {
