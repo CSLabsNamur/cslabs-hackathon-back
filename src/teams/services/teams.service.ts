@@ -114,7 +114,7 @@ export class TeamsService {
       );
     }
     const team = await this.getByToken(teamToken);
-    await this.updateValidity(team);
+    await this.updateValidity(team.id);
     return await this.usersService.setTeam(user, team);
   }
 
@@ -128,7 +128,7 @@ export class TeamsService {
       throw new HttpException('user has not any team.', HttpStatus.BAD_REQUEST);
     }
     await this.usersService.removeTeam(user);
-    await this.updateValidity(team);
+    await this.updateValidity(team.id);
     return team;
   }
 
@@ -150,17 +150,18 @@ export class TeamsService {
     return await this.leave(memberId);
   }
 
-  async updateValidity(team: Team) {
-    const valid =
-      team.members.filter((member) => member.paidCaution).length > 0;
-    if (team.valid !== valid) {
-      await this.teamsRepository.update(team.id, { valid });
-    }
+  async updateValidity(teamId: string) {
+    const team = await this.getById(teamId);
+    const valid = team.members.filter((member) => member.paidCaution).length > 0;
+    await this.teamsRepository.update(team.id, { valid });
   }
 
   async create(userID: string, teamData: CreateTeamDto): Promise<Team> {
     const { name, description, idea, invitations } = teamData;
     const user = await this.usersService.getById(userID);
+    if (await this.teamsRepository.findOne({name})) {
+      throw new HttpException("A team with this name already exists.", HttpStatus.BAD_REQUEST);
+    }
     const team = await this.teamsRepository.create({
       name,
       description,

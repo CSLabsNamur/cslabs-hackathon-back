@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -51,6 +52,14 @@ export class User {
   @Column({ type: 'boolean', default: false })
   public isAdmin: boolean;
 
+  /**
+   * Path of the user CV
+   * @type {[string]}
+   * @default null
+   */
+  @Column({ nullable: true })
+  public cv?: string;
+
   /** The hashed refresh token of the user
    * It is excluded from the Http responses
    * @type {string | null}
@@ -79,4 +88,13 @@ export class User {
 
   @Column({ type: 'uuid', nullable: true })
   public voteId: string;
+
+  @Column({ type: 'bigint'})
+  public createdAt: number;
+
+  @BeforeInsert()
+  public setCreatedAt() {
+    this.createdAt = Date.now();
+  }
+
 }

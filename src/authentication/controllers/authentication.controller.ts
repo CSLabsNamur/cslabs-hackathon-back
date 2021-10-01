@@ -85,7 +85,7 @@ export class AuthenticationController {
    * @param {AskPasswordResetDto} askPasswordResetData - The DTO containing the email of the receiver
    * @throws 403 if the email is malformed
    */
-  @Get('ask-password-reset')
+  @Post('ask-password-reset')
   async askPasswordReset(@Body() askPasswordResetData: AskPasswordResetDto) {
     await this.authenticationService.sendPasswordResetMail(
       askPasswordResetData.email,

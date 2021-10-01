@@ -3,7 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Inject,
-  Injectable,
+  Injectable, Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
@@ -14,12 +14,17 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import { TeamsService } from '../../teams/services/teams.service';
 import { PublicUserInterface } from '../public-user.interface';
 import { Team } from '../../teams/entities/team.entity';
+import * as fs from 'fs/promises';
+import * as path from "path";
 
 /** Class handling the business logic about users
  * @see User
  */
 @Injectable()
 export class UsersService {
+
+  private logger = new Logger(UsersService.name);
+
   /** Configure the instance and reference other services */
   constructor(
     @Inject(forwardRef(() => TeamsService))
@@ -58,7 +63,7 @@ export class UsersService {
    * @param id - The ID of the user
    * @throws {HttpException} if the user does not exist
    */
-  async getById(id: string): Promise<User> {
+  async getById(id: string, memberAllInfo = false): Promise<User> {
     const user = await this.usersRepository.findOne(
       { id },
       { relations: ['team', 'team.members'] },
@@ -71,7 +76,7 @@ export class UsersService {
     }
 
     const members = user.team?.members;
-    if (members) {
+    if (members && !memberAllInfo) {
       user.team.members = await Promise.all(members.map(
         async (member) => await this.filterPrivateInformation(member) as User
       ))
@@ -95,7 +100,7 @@ export class UsersService {
   }
 
   async getAll(): Promise<User[]> {
-    return await this.usersRepository.find();
+    return await this.usersRepository.find({relations: ['team']});
   }
 
   /** Return an user by its ID if the refresh token is valid
@@ -156,10 +161,10 @@ export class UsersService {
   }
 
   async setCautionStatus(userId: string, cautionStatus: boolean) {
-    const user = await this.getById(userId);
+    const user = await this.getById(userId, true);
     await this.usersRepository.update(user.id, { paidCaution: cautionStatus });
     if (user.team) {
-      await this.teamsService.updateValidity(user.team);
+      await this.teamsService.updateValidity(user.team.id);
     }
   }
 
@@ -173,6 +178,24 @@ export class UsersService {
       comment,
     });
     return await this.getById(userId);
+  }
+
+  async uploadCv(userId: string, file?: Express.Multer.File) {
+    if (!file) {
+      throw new HttpException('Missing CV file.', HttpStatus.BAD_REQUEST);
+    }
+    const user = await this.getById(userId);
+    if (user.cv) {
+      try {
+        await fs.rm(user.cv);
+        this.logger.log(`Removed old CV: [${user.cv}].`);
+      } catch (err) {
+        this.logger.error(`Failed to remove old cv: [${user.cv}].`);
+      }
+    }
+
+    await this.usersRepository.update(userId, { cv: file.path });
+    this.logger.log(`Uploaded CV: [${file.path}].`);
   }
 
   async delete(userId: string) {

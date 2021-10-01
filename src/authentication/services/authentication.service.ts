@@ -116,16 +116,7 @@ export class AuthenticationService {
     const user = await this.usersService.getByEmail(email);
     if (user) {
       const token = await this.getPasswordResetToken(user.id);
-      const domain = this.configService.get('FRONTEND_DOMAIN');
-      await this.emailService.sendMail({
-        to: email,
-        subject: 'NestJS Template - Password Reset',
-        text: `
-        A new password has been requested from ${domain} website.
-        If you are indeed the originator of this request, follow this link to perform the password reset:
-        ${domain}/password-reset/${token}
-        `,
-      });
+      await this.emailService.sendPasswordReset(user, token);
     }
   }
 

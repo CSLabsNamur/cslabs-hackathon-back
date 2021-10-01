@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
 @Entity()
@@ -23,4 +23,12 @@ export class Team {
 
   @OneToMany(() => User, (user: User) => user.team, { onDelete: 'SET NULL' })
   public members: User[];
+
+  @Column({ type: 'bigint' })
+  public createdAt: number;
+
+  @BeforeInsert()
+  public setCreatedAt() {
+    this.createdAt = Date.now();
+  }
 }

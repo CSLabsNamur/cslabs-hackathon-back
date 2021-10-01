@@ -3,6 +3,7 @@ import Mail from 'nodemailer/lib/mailer';
 import { ConfigService } from '@nestjs/config';
 import { createTransport } from 'nodemailer';
 import { Team } from '../../teams/entities/team.entity';
+import {User} from "../../users/entities/user.entity";
 
 /** Class handling business logic about emails */
 @Injectable()
@@ -45,7 +46,7 @@ export class EmailService {
         Vous recevez ce mail car on vous a envoyé une invitation à rejoindre une équipe :
         -\tNom : ${team.name}
         Vous pouvez rejoindre cette équipe en cliquant sur
-        le lien [${domain}/team/join?token=${encodedToken}] ou en entrant le code d’invitation
+        le lien [${domain}/team/join/${encodedToken}] ou en entrant le code d’invitation
         dans la section « Mon équipe » de notre site.
         
         Code d’invitation : ${encodedToken}
@@ -98,5 +99,19 @@ export class EmailService {
       text: messagePlainText,
       html: messageHtml,
     });
+  }
+
+  async sendPasswordReset(user: User, token: string) {
+    const domain = this.configService.get('FRONTEND_DOMAIN');
+    await this.sendMail({
+      to: user.email,
+      subject: 'CSLabs Hackathon "Le Bien Vieillir" - Réinitialiser le mot de passe',
+      text: `
+        Un nouveau mot de passe a été demandé pour l'utilisateur ${user.email} du site ${domain}.
+        Si cette demande est de votre initiative, suivez ce lien afin de définir un nouveau mot de passe pour votre compte :
+        ${domain}/password-reset/${token}
+        `,
+    });
+
   }
 }
