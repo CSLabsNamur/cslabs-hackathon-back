@@ -3,7 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Inject,
-  Injectable,
+  Injectable, Logger,
 } from '@nestjs/common';
 import { UsersService } from '../../users/services/users.service';
 import { CreateTeamDto } from '../dto/create-team.dto';
@@ -27,6 +27,8 @@ export class TeamsService {
     @InjectRepository(Team)
     private readonly teamsRepository: Repository<Team>,
   ) {}
+
+  private logger = new Logger(TeamsService.name);
 
   async getAll(user: User): Promise<Team[] | PublicTeamInterface[]> {
     let teams = await this.teamsRepository.find({ relations: ['members'] });
@@ -158,7 +160,7 @@ export class TeamsService {
 
   async create(userID: string, teamData: CreateTeamDto): Promise<Team> {
     const { name, description, idea, invitations } = teamData;
-    const user = await this.usersService.getById(userID);
+    let user = await this.usersService.getById(userID);
     if (await this.teamsRepository.findOne({name})) {
       throw new HttpException("A team with this name already exists.", HttpStatus.BAD_REQUEST);
     }
@@ -198,12 +200,12 @@ export class TeamsService {
     }
 
     await this.teamsRepository.save(team);
-
+    user = await this.usersService.getById(userID);
     await Promise.all(invitations.map(async (email) => {
       try {
         await this.invite(user, email);
-      } catch {
-        // Ignore the case when an invitation failed.
+      } catch (error) {
+        this.logger.error(`Failed to invite [${email}].`);
       }
     }));
 
