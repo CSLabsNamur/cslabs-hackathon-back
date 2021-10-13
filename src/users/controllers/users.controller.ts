@@ -18,6 +18,7 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import { SetCautionDto } from '../dto/set-caution.dto';
 import {FileInterceptor} from "@nestjs/platform-express";
 import {pdfFileFilter} from "../../utils/multer/pdf-file.filter";
+import {SendAnnounceDto} from "../dto/send-announce.dto";
 
 @Controller('users')
 export class UsersController {
@@ -62,6 +63,13 @@ export class UsersController {
   }))
   async uploadCv(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File) {
     await this.usersService.uploadCv(request.user.id, file);
+  }
+
+  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthenticationGuard)
+  @Post('announce')
+  async sendAnnounce(@Body() announceData: SendAnnounceDto) {
+    await this.usersService.sendAnnounceToAll(announceData);
   }
 
   @UseGuards(AdminGuard)

@@ -112,6 +112,14 @@ export class EmailService {
         ${domain}/password-reset/${token}
         `,
     });
+  }
 
+  async sendAdminAnnounce(subject: string, announce: string, emails: string[]) {
+    await Promise.all(emails.map((email) => this.sendMail({
+        to: email,
+        subject: `CSLabs Hackathon "Le Bien Vieillir" - IMPORTANT : ${subject}`,
+        text: announce,
+      }))
+    );
   }
 }

@@ -8,6 +8,7 @@ import { TeamsModule } from '../teams/teams.module';
 import {MulterModule} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {pdfFileNameFactory} from "../utils/multer/pdf-file-name.factory";
+import {EmailModule} from "../email/email.module";
 
 /** NestJs Module handling the users of the server */
 @Module({
@@ -24,6 +25,7 @@ import {pdfFileNameFactory} from "../utils/multer/pdf-file-name.factory";
     }),
     forwardRef(() => AuthenticationModule),
     forwardRef(() => TeamsModule),
+    EmailModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

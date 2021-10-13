@@ -15,7 +15,8 @@ import { TeamsService } from '../../teams/services/teams.service';
 import { PublicUserInterface } from '../public-user.interface';
 import { Team } from '../../teams/entities/team.entity';
 import * as fs from 'fs/promises';
-import * as path from "path";
+import {SendAnnounceDto} from "../dto/send-announce.dto";
+import {EmailService} from "../../email/services/email.service";
 
 /** Class handling the business logic about users
  * @see User
@@ -27,6 +28,7 @@ export class UsersService {
 
   /** Configure the instance and reference other services */
   constructor(
+    private readonly emailService: EmailService,
     @Inject(forwardRef(() => TeamsService))
     private readonly teamsService: TeamsService,
     @InjectRepository(User)
@@ -61,6 +63,7 @@ export class UsersService {
 
   /** Return an user by its ID
    * @param id - The ID of the user
+   * @param memberAllInfo - Return private information if True, otherwise return public information
    * @throws {HttpException} if the user does not exist
    */
   async getById(id: string, memberAllInfo = false): Promise<User> {
@@ -196,6 +199,12 @@ export class UsersService {
 
     await this.usersRepository.update(userId, { cv: file.path });
     this.logger.log(`Uploaded CV: [${file.path}].`);
+  }
+
+  async sendAnnounceToAll(data: SendAnnounceDto) {
+    const users = await this.getAll();
+    const emails = users.map((user) => user.email);
+    await this.emailService.sendAdminAnnounce(data.subject, data.announce, emails);
   }
 
   async delete(userId: string) {
