@@ -34,7 +34,11 @@ export class TeamsService {
     let teams = await this.teamsRepository.find({ relations: ['members'] });
 
     if (!user.isAdmin) {
-      return await Promise.all(teams.map(async (team) => this.filterPrivateInformation(team)));
+      return await Promise.all(
+        teams
+          .filter((team) => team.valid)
+          .map(async (team) => this.filterPrivateInformation(team))
+      );
     }
 
     return teams;

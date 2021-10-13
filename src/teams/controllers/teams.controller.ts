@@ -19,7 +19,6 @@ import { Team } from '../entities/team.entity';
 import { PublicTeamInterface } from '../public-team.interface';
 import { UpdateTeamDto } from '../dto/update-team.dto';
 import { InviteTeamDto } from '../dto/invite-team.dto';
-import {AdminGuard} from "../../authentication/guards/admin.guard";
 
 @Controller('teams')
 export class TeamsController {
