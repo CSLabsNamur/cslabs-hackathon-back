@@ -15,7 +15,7 @@ services:
     
   hackathon2021_pgadmin:
     links:
-    - postgres:postgres
+    - hackathon2021_postgres:postgres
     container_name: hackathon_pgadmin
     image: dpage/pgadmin4
     ports:
