@@ -44,7 +44,7 @@ export class AuthenticationController {
    * @param {RegisterDto} registrationData - The needed data for registering the user
    * @throws 403 if the registration data is invalid
    */
-  // @Post('register') TODO : reactivate this
+  @Post('register')
   async register(@Body() registrationData: RegisterDto): Promise<User> {
     return this.authenticationService.register(registrationData);
   }
