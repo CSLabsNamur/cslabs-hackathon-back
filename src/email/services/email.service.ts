@@ -35,12 +35,82 @@ export class EmailService {
     return this.nodemailerTransport.sendMail(options);
   }
 
+  async sendRegistrationConfirmationMail(newUserEmail: string) {
+    const domain = this.configService.get('FRONTEND_DOMAIN');
+    const iban = this.configService.get('HACKATHON_IBAN');
+
+    const messagePlainText = `
+    Bienvenue à l’édition 2022 de notre Hackathon !
+    Site officiel : ${domain}
+    
+    Vous recevez ce mail car vous vous êtes inscrit sur notre site.
+    
+    ------------- Informations utiles
+        
+    Attention, votre participation au hackathon n'est effective qu'à partir du moment où votre caution est payée.
+    Vous pouvez vérifier la validation de votre caution sur votre profile (https://hackathon.cslabs.be/team/user).
+    
+    -\tMontant : 20€
+    -\tCompte : ${iban}
+    -\tCommunication : NOM Prénom
+    
+    Il vous est possible de créer une équipe, si vous le souhaitez, et d'y inviter vos amis.
+    
+    Une équipe est considérée participante lorsque celle-ci possède au moins un membre confirmé.
+    Une équipe possède au maximum 5 membres.
+    
+    Si vous n'avez pas encore d'équipe, pas de panique ! Vous pouvez en constituer sur place le jour J ou bien via
+    le discord officiel du Hackathon (https://discord.gg/Jf2Dht8). N'hésitez pas à rejoindre ce dernier afin de discuter avec nous !
+    
+    N'hésitez pas à prendre contact avec notre équipe via Discord ou via cette adresse email.
+    
+    Au plaisir de vous voir, l'équipe organisatrice.
+    `;
+
+    const messageHtml = `
+    <h2>Bienvenue à l’édition 2022 de notre Hackathon !</h2>
+    <h5>Site officiel : <a href="${domain}">${domain}</a></h6>
+    
+    <p>Vous recevez ce mail car vous vous êtes inscrit sur notre site.</p>
+    
+    ------------- Informations utiles
+        
+    <p>Attention, votre participation au hackathon n'est effective qu'à partir du moment où votre caution est payée.
+    Vous pouvez vérifier la validation de votre caution sur <a href="https://hackathon.cslabs.be/team/user">votre profile</a>.</p>
+    
+    <ul>
+    <li>Montant : 20€</li>
+    <li>Compte : <b>${iban}</b></li>
+    <li>Communication : <b>NOM Prénom</b></li>
+    </ul>
+    
+    <p>Il vous est possible de créer une équipe, si vous le souhaitez, et d'y inviter vos amis.</p>
+    
+    <p>Une équipe est considérée participante lorsque celle-ci possède au moins un membre confirmé.</p>
+    <p>Une équipe possède au maximum 5 membres.</p>
+    
+    <p>Si vous n'avez pas encore d'équipe, pas de panique ! Vous pouvez en constituer sur place le jour J ou bien via
+    le <a href="https://discord.gg/Jf2Dht8">discord officiel du Hackathon</a>. N'hésitez pas à rejoindre ce dernier afin de discuter avec nous !</p>
+    
+    <p>N'hésitez pas à prendre contact avec notre équipe via Discord ou via cette adresse email.</p>
+    
+    <p>Au plaisir de vous voir, l'équipe organisatrice.</p>
+    `;
+
+    await this.sendMail({
+      to: newUserEmail,
+      subject: 'CSLabs Hackathon "Le Bien Vieillir" - Bienvenue !',
+      text: messagePlainText,
+      html: messageHtml,
+    });
+  }
+
   async sendTeamInvitation(team: Team, newMemberEmail: string) {
     const domain = this.configService.get('FRONTEND_DOMAIN');
     const iban = this.configService.get('HACKATHON_IBAN');
     const encodedToken = Buffer.from(team.token).toString('base64');
     const messagePlainText = `
-        Bienvenue à l’édition 2021 de notre Hackathon !
+        Bienvenue à l’édition 2022 de notre Hackathon !
         Site officiel : ${domain}
         
         Vous recevez ce mail car on vous a envoyé une invitation à rejoindre une équipe :
@@ -59,11 +129,15 @@ export class EmailService {
         -\tMontant : 20€
         -\tCompte : ${iban}
         -\tCommunication : NOM Prénom
-        Votre équipe sera considérée participante lorsque celle-ci possédera au moins un membre confirmé.
         
-        Une équipe possède au maximum 5 membres.`;
+        Votre équipe sera considérée participante lorsque celle-ci possédera au moins un membre confirmé.
+        Une équipe possède au maximum 5 membres.
+        
+        Si vous n'avez pas encore d'équipe, pas de panique ! Vous pouvez en constituer sur place le jour J ou bien via
+        le discord officiel du Hackathon (https://discord.gg/Jf2Dht8).
+        `;
     const messageHtml = `
-        <h2>Bienvenue à l’édition 2021 de notre Hackathon !</h1>
+        <h2>Bienvenue à l’édition 2022 de notre Hackathon !</h1>
         <h5>Site officiel : <a href="${domain}">${domain}</a></h6>
         
         <p>Vous recevez ce mail car l’on vous a envoyé une invitation à rejoindre une équipe :</p>
@@ -72,7 +146,7 @@ export class EmailService {
         <li>Nom : ${team.name}</li>
         </ul>
         <p>Vous pouvez rejoindre cette équipe en cliquant sur
-        le <a href="${domain}/team/invite/${encodedToken}">lien</a> ou
+        le <a href="${domain}/team/join/${encodedToken}">lien</a> ou
         en entrant le code d’invitation
         dans la section « Mon équipe » de notre site.</p>
         <p>Code d’invitation : <strong>${encodedToken}</strong></p>
@@ -91,8 +165,11 @@ export class EmailService {
         </ul>
         
         <p>Votre équipe sera considérée participante lorsque celle-ci possédera au moins un membre confirmé.</p>
+        <p>Une équipe possède au maximum 5 membres.</p>
         
-        <p>Une équipe possède au maximum 5 membres.</p>`;
+        <p>Si vous n'avez pas encore d'équipe, pas de panique ! Vous pouvez en constituer sur place le jour J ou bien via
+        le discord officiel du Hackathon (<a href="https://discord.gg/Jf2Dht8">https://discord.gg/Jf2Dht8</a>).</p>
+        `;
     await this.sendMail({
       to: newMemberEmail,
       subject: 'CSLabs Hackathon "Le Bien Vieillir" - Invitation',

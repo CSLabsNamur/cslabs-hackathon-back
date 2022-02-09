@@ -44,6 +44,13 @@ export class AuthenticationService {
         password: hashedPassword,
       });
       createdUser.password = undefined;
+
+      try {
+        await this.emailService.sendRegistrationConfirmationMail(createdUser.email)
+      } catch (err) {
+        console.error(`Failed to send confirmation email: ${createdUser.email}`);
+      }
+
       return createdUser;
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
