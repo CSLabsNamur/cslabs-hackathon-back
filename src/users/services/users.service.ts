@@ -245,4 +245,18 @@ export class UsersService {
       password: newHashedPassword,
     });
   }
+
+  /**
+   * Check all constraints related to user registration process.
+   * For example, the number of users is limited.
+   * @throws {HttpException} if a constraint is not respected.
+   */
+  async checkRegistrationConstraints() {
+    const users = await this.usersRepository.find({ where: {isAdmin: false} });
+
+    const MAX_USERS = 65;
+    if (users.length >= MAX_USERS) {
+      throw new HttpException('Max number of users reached.', HttpStatus.FORBIDDEN);
+    }
+  }
 }

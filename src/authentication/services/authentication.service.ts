@@ -34,6 +34,8 @@ export class AuthenticationService {
    *  Indeed, the email must be unique and the data must respect the constraints of the user entity
    */
   public async register(registrationData: RegisterDto): Promise<User> {
+    await this.usersService.checkRegistrationConstraints();
+
     const hashedPassword = await AuthenticationService.hashPassword(
       registrationData.password,
     );
