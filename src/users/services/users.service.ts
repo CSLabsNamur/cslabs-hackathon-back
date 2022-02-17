@@ -259,4 +259,13 @@ export class UsersService {
       throw new HttpException('Max number of users reached.', HttpStatus.FORBIDDEN);
     }
   }
+
+  /**
+   * Get the number of votes for a specific team.
+   * @param team_id - The ID of the team. It must be a valid team ID.
+   * @return {number} The number of votes for this team.
+   */
+  async getVotesFor(team_id: string): Promise<number> {
+    return await this.usersRepository.count({where: {voteId: team_id}});
+  }
 }

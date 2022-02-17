@@ -109,7 +109,22 @@ export class TeamsService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    if (!team.valid) {
+      throw new HttpException(
+        'user cannot vote for an invalid team..',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     await this.usersService.setVote(user.id, team);
+  }
+
+  async getVoteResults() {
+    const teams = await this.teamsRepository.find({where: {valid: true}});
+    return await Promise.all(teams.map(async (team) => ({
+      id: team.id,
+      name: team.name,
+      votes: await this.usersService.getVotesFor(team.id)
+    })));
   }
 
   async join(user: User, teamToken: string) {

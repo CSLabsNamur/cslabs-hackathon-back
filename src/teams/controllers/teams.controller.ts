@@ -19,6 +19,7 @@ import { Team } from '../entities/team.entity';
 import { PublicTeamInterface } from '../public-team.interface';
 import { UpdateTeamDto } from '../dto/update-team.dto';
 import { InviteTeamDto } from '../dto/invite-team.dto';
+import { AdminGuard } from "../../authentication/guards/admin.guard";
 
 @Controller('teams')
 export class TeamsController {
@@ -57,6 +58,14 @@ export class TeamsController {
     @Body() invitationData: InviteTeamDto,
   ) {
     await this.teamsService.invite(request.user, invitationData.email);
+  }
+
+
+  @UseGuards(AdminGuard)
+  @UseGuards(JwtAuthenticationGuard)
+  @Get('vote/results')
+  async voteResults() {
+    return await this.teamsService.getVoteResults();
   }
 
   @UseGuards(JwtAuthenticationGuard)
