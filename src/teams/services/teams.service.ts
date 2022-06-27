@@ -9,7 +9,7 @@ import { UsersService } from '../../users/services/users.service';
 import { CreateTeamDto } from '../dto/create-team.dto';
 
 import { v4 as uuid_v4 } from 'uuid';
-import { Connection, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Team } from '../entities/team.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../users/entities/user.entity';
@@ -23,7 +23,7 @@ export class TeamsService {
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly emailService: EmailService,
-    private readonly connection: Connection,
+    private readonly connection: DataSource,
     @InjectRepository(Team)
     private readonly teamsRepository: Repository<Team>,
   ) {}
@@ -45,9 +45,13 @@ export class TeamsService {
   }
 
   async getById(teamId: string): Promise<Team> {
-    const team = await this.teamsRepository.findOne(teamId, {
+    const team = await this.teamsRepository.findOne({
+      where: {id: teamId},
       relations: ['members'],
     });
+    // const team = await this.teamsRepository.findOne(teamId, {
+    //   relations: ['members'],
+    // }); TODO : CHECK AND REMOVE THIS
     if (!team) {
       throw new HttpException(
         'Team with this identifier does not exist.',
@@ -58,10 +62,14 @@ export class TeamsService {
   }
 
   async getByToken(teamToken: string) {
-    const team = await this.teamsRepository.findOne(
-      { token: teamToken },
-      { relations: ['members'] },
-    );
+    const team = await this.teamsRepository.findOne({
+      where: { token: teamToken },
+      relations: ['members'],
+    })
+    // const team = await this.teamsRepository.findOne(
+    //   { token: teamToken },
+    //   { relations: ['members'] },
+    // ); TODO : CHECK AND REMOVE
     if (!team) {
       throw new HttpException('wrong token.', HttpStatus.BAD_REQUEST);
     }
@@ -180,7 +188,7 @@ export class TeamsService {
   async create(userID: string, teamData: CreateTeamDto): Promise<Team> {
     const { name, description, idea, invitations } = teamData;
     let user = await this.usersService.getById(userID);
-    if (await this.teamsRepository.findOne({name})) {
+    if (await this.teamsRepository.findOneBy({name})) {
       throw new HttpException("A team with this name already exists.", HttpStatus.BAD_REQUEST);
     }
     const team = await this.teamsRepository.create({

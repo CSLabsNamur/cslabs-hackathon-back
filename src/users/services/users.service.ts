@@ -40,10 +40,14 @@ export class UsersService {
    * @throws {HttpException} if the user does not exist
    */
   async getByEmail(email: string): Promise<User> {
-    const user = await this.usersRepository.findOne(
-      { email },
-      { relations: ['team', 'team.members'] },
-    );
+    const user = await this.usersRepository.findOne({
+      where: {email},
+      relations: ['team', 'team.members'],
+    });
+    // const user = await this.usersRepository.findOne(
+    //   { email },
+    //   { relations: ['team', 'team.members'] },
+    // ); // CHECK AND REMOVE
     if (!user) {
       throw new HttpException(
         'User with this email does not exist.',
@@ -67,10 +71,14 @@ export class UsersService {
    * @throws {HttpException} if the user does not exist
    */
   async getById(id: string, memberAllInfo = false): Promise<User> {
-    const user = await this.usersRepository.findOne(
-      { id },
-      { relations: ['team', 'team.members'] },
-    );
+    // const user = await this.usersRepository.findOne(
+    //   { id },
+    //   { relations: ['team', 'team.members'] },
+    // ); TODO : CHECK AND REMOVE
+    const user = await this.usersRepository.findOne({
+      where: {id},
+      relations: ['team', 'team.members'],
+    });
     if (!user) {
       throw new HttpException(
         'User with this identifier does not exist.',

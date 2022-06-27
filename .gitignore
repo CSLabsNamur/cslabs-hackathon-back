@@ -27,7 +27,8 @@ docker.env
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 
-# Gradle:
+# IDE:
+.idea/
 .idea/**/gradle.xml
 .idea/**/libraries
 
