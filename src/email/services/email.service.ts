@@ -99,7 +99,7 @@ export class EmailService {
 
     await this.sendMail({
       to: newUserEmail,
-      subject: 'CSLabs Hackathon "Le Handicap (coin du bien-être)" - Bienvenue !',
+      subject: 'CSLabs Hackathon "Le Handicap" - Bienvenue !',
       text: messagePlainText,
       html: messageHtml,
     });
@@ -172,7 +172,7 @@ export class EmailService {
         `;
     await this.sendMail({
       to: newMemberEmail,
-      subject: 'CSLabs Hackathon "Le Handicap (coin du bien-être)" - Invitation',
+      subject: 'CSLabs Hackathon "Le Handicap" - Invitation',
       text: messagePlainText,
       html: messageHtml,
     });
@@ -182,7 +182,7 @@ export class EmailService {
     const domain = this.configService.get('FRONTEND_DOMAIN');
     await this.sendMail({
       to: user.email,
-      subject: 'CSLabs Hackathon "Le Handicap (coin du bien-être)" - Réinitialiser le mot de passe',
+      subject: 'CSLabs Hackathon "Le Handicap" - Réinitialiser le mot de passe',
       text: `
         Un nouveau mot de passe a été demandé pour l'utilisateur ${user.email} du site ${domain}.
         Si cette demande est de votre initiative, suivez ce lien afin de définir un nouveau mot de passe pour votre compte :
@@ -194,7 +194,7 @@ export class EmailService {
   async sendAdminAnnounce(subject: string, announce: string, emails: string[]) {
     await Promise.all(emails.map((email) => this.sendMail({
         to: email,
-        subject: `CSLabs Hackathon "Le Handicap (coin du bien-être)" - IMPORTANT : ${subject}`,
+        subject: `CSLabs Hackathon "Le Handicap" - IMPORTANT : ${subject}`,
         text: announce,
       }))
     );
