@@ -229,8 +229,9 @@ export class UsersService {
    * @throws {Error} if the data is invalid
    */
   async create(userData: CreateUserDto): Promise<User> {
-    const { email, firstName, lastName, github, linkedIn, comment, password } =
-      userData;
+    const {
+      email, firstName, lastName, github, linkedIn, comment, password, imageAgreement,
+    } = userData;
     const newUser = await this.usersRepository.create({
       email,
       firstName,
@@ -239,6 +240,7 @@ export class UsersService {
       linkedIn,
       comment,
       password,
+      imageAgreement,
     });
     await this.usersRepository.save(newUser);
     return newUser;

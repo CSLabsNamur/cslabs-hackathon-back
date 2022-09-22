@@ -89,6 +89,9 @@ export class User {
   @Column({ type: 'uuid', nullable: true })
   public voteId: string;
 
+  @Column({ type: 'boolean' })
+  public imageAgreement: boolean;
+
   @Column({ type: 'bigint'})
   public createdAt: number;
 
