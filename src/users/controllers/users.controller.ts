@@ -69,7 +69,7 @@ export class UsersController {
   @UseGuards(JwtAuthenticationGuard)
   @Post('announce')
   async sendAnnounce(@Body() announceData: SendAnnounceDto) {
-    await this.usersService.sendAnnounceToAll(announceData);
+    await this.usersService.sendAnnounce(announceData);
   }
 
   @UseGuards(AdminGuard)

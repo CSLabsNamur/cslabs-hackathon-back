@@ -92,6 +92,9 @@ export class User {
   @Column({ type: 'boolean' })
   public imageAgreement: boolean;
 
+  @Column({ type: 'boolean' })
+  public subscribeFormation: boolean;
+
   @Column({ type: 'bigint'})
   public createdAt: number;
 

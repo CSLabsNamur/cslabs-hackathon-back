@@ -209,8 +209,24 @@ export class UsersService {
     this.logger.log(`Uploaded CV: [${file.path}].`);
   }
 
+  async sendAnnounce(data: SendAnnounceDto) {
+    switch (data.addressee) {
+      case 'formation':
+        await this.sendFormationAnnounce(data);
+        break;
+      default:
+        await this.sendAnnounceToAll(data);
+    }
+  }
+
   async sendAnnounceToAll(data: SendAnnounceDto) {
     const users = await this.getAll();
+    const emails = users.map((user) => user.email);
+    await this.emailService.sendAdminAnnounce(data.subject, data.announce, emails);
+  }
+
+  async sendFormationAnnounce(data: SendAnnounceDto) {
+    const users = (await this.getAll()).filter((user) => user.subscribeFormation);
     const emails = users.map((user) => user.email);
     await this.emailService.sendAdminAnnounce(data.subject, data.announce, emails);
   }
@@ -230,7 +246,7 @@ export class UsersService {
    */
   async create(userData: CreateUserDto): Promise<User> {
     const {
-      email, firstName, lastName, github, linkedIn, comment, password, imageAgreement,
+      email, firstName, lastName, github, linkedIn, comment, password, imageAgreement, subscribeFormation,
     } = userData;
     const newUser = await this.usersRepository.create({
       email,
@@ -241,6 +257,7 @@ export class UsersService {
       comment,
       password,
       imageAgreement,
+      subscribeFormation,
     });
     await this.usersRepository.save(newUser);
     return newUser;

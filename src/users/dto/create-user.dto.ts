@@ -10,4 +10,5 @@ export class CreateUserDto {
   comment?: string;
   password: string;
   imageAgreement: boolean;
+  subscribeFormation: boolean;
 }

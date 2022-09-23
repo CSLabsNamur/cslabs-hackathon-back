@@ -64,4 +64,7 @@ export class RegisterDto {
 
   @IsBoolean()
   imageAgreement: boolean;
+
+  @IsBoolean()
+  subscribeFormation: boolean;
 }
