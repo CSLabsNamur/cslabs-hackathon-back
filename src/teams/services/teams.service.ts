@@ -46,12 +46,9 @@ export class TeamsService {
 
   async getById(teamId: string): Promise<Team> {
     const team = await this.teamsRepository.findOne({
-      where: {id: teamId},
+      where: { id: teamId },
       relations: ['members'],
     });
-    // const team = await this.teamsRepository.findOne(teamId, {
-    //   relations: ['members'],
-    // }); TODO : CHECK AND REMOVE THIS
     if (!team) {
       throw new HttpException(
         'Team with this identifier does not exist.',
@@ -65,11 +62,7 @@ export class TeamsService {
     const team = await this.teamsRepository.findOne({
       where: { token: teamToken },
       relations: ['members'],
-    })
-    // const team = await this.teamsRepository.findOne(
-    //   { token: teamToken },
-    //   { relations: ['members'] },
-    // ); TODO : CHECK AND REMOVE
+    });
     if (!team) {
       throw new HttpException('wrong token.', HttpStatus.BAD_REQUEST);
     }
