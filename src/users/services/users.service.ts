@@ -3,7 +3,8 @@ import {
   HttpException,
   HttpStatus,
   Inject,
-  Injectable, Logger,
+  Injectable,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
@@ -15,15 +16,14 @@ import { TeamsService } from '../../teams/services/teams.service';
 import { PublicUserInterface } from '../public-user.interface';
 import { Team } from '../../teams/entities/team.entity';
 import * as fs from 'fs/promises';
-import {SendAnnounceDto} from "../dto/send-announce.dto";
-import {EmailService} from "../../email/services/email.service";
+import { SendAnnounceDto } from '../dto/send-announce.dto';
+import { EmailService } from '../../email/services/email.service';
 
 /** Class handling the business logic about users
  * @see User
  */
 @Injectable()
 export class UsersService {
-
   private logger = new Logger(UsersService.name);
 
   /** Configure the instance and reference other services */
@@ -40,10 +40,10 @@ export class UsersService {
    * @throws {HttpException} if the user does not exist
    */
   async getByEmail(email: string): Promise<User> {
-    const user = await this.usersRepository.findOne(
-      { email },
-      { relations: ['team', 'team.members'] },
-    );
+    const user = await this.usersRepository.findOne({
+      where: { email },
+      relations: ['team', 'team.members'],
+    });
     if (!user) {
       throw new HttpException(
         'User with this email does not exist.',
@@ -53,9 +53,12 @@ export class UsersService {
 
     const members = user.team?.members;
     if (members) {
-      user.team.members = await Promise.all(members.map(
-        async (member) => await this.filterPrivateInformation(member) as User
-      ))
+      user.team.members = await Promise.all(
+        members.map(
+          async (member) =>
+            (await this.filterPrivateInformation(member)) as User,
+        ),
+      );
     }
 
     return user;
@@ -67,10 +70,10 @@ export class UsersService {
    * @throws {HttpException} if the user does not exist
    */
   async getById(id: string, memberAllInfo = false): Promise<User> {
-    const user = await this.usersRepository.findOne(
-      { id },
-      { relations: ['team', 'team.members'] },
-    );
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['team', 'team.members'],
+    });
     if (!user) {
       throw new HttpException(
         'User with this identifier does not exist.',
@@ -80,9 +83,12 @@ export class UsersService {
 
     const members = user.team?.members;
     if (members && !memberAllInfo) {
-      user.team.members = await Promise.all(members.map(
-        async (member) => await this.filterPrivateInformation(member) as User
-      ))
+      user.team.members = await Promise.all(
+        members.map(
+          async (member) =>
+            (await this.filterPrivateInformation(member)) as User,
+        ),
+      );
     }
 
     return user;
@@ -90,7 +96,14 @@ export class UsersService {
 
   async filterPrivateInformation(user: User): Promise<PublicUserInterface> {
     const { id, firstName, lastName, github, linkedIn, paidCaution } = user;
-    const publicUser = { id, firstName, lastName, github, linkedIn, paidCaution };
+    const publicUser = {
+      id,
+      firstName,
+      lastName,
+      github,
+      linkedIn,
+      paidCaution,
+    };
 
     if (user.team) {
       return {
@@ -103,7 +116,7 @@ export class UsersService {
   }
 
   async getAll(): Promise<User[]> {
-    return await this.usersRepository.find({relations: ['team']});
+    return await this.usersRepository.find({ relations: ['team'] });
   }
 
   /** Return an user by its ID if the refresh token is valid
@@ -201,10 +214,36 @@ export class UsersService {
     this.logger.log(`Uploaded CV: [${file.path}].`);
   }
 
+  async sendAnnounce(data: SendAnnounceDto) {
+    switch (data.addressee) {
+      case 'formation':
+        await this.sendFormationAnnounce(data);
+        break;
+      default:
+        await this.sendAnnounceToAll(data);
+    }
+  }
+
   async sendAnnounceToAll(data: SendAnnounceDto) {
     const users = await this.getAll();
     const emails = users.map((user) => user.email);
-    await this.emailService.sendAdminAnnounce(data.subject, data.announce, emails);
+    await this.emailService.sendAdminAnnounce(
+      data.subject,
+      data.announce,
+      emails,
+    );
+  }
+
+  async sendFormationAnnounce(data: SendAnnounceDto) {
+    const users = (await this.getAll()).filter(
+      (user) => user.subscribeFormation,
+    );
+    const emails = users.map((user) => user.email);
+    await this.emailService.sendAdminAnnounce(
+      data.subject,
+      data.announce,
+      emails,
+    );
   }
 
   async delete(userId: string) {
@@ -221,8 +260,17 @@ export class UsersService {
    * @throws {Error} if the data is invalid
    */
   async create(userData: CreateUserDto): Promise<User> {
-    const { email, firstName, lastName, github, linkedIn, comment, password } =
-      userData;
+    const {
+      email,
+      firstName,
+      lastName,
+      github,
+      linkedIn,
+      comment,
+      password,
+      imageAgreement,
+      subscribeFormation,
+    } = userData;
     const newUser = await this.usersRepository.create({
       email,
       firstName,
@@ -231,6 +279,8 @@ export class UsersService {
       linkedIn,
       comment,
       password,
+      imageAgreement,
+      subscribeFormation,
     });
     await this.usersRepository.save(newUser);
     return newUser;
@@ -252,11 +302,16 @@ export class UsersService {
    * @throws {HttpException} if a constraint is not respected.
    */
   async checkRegistrationConstraints() {
-    const users = await this.usersRepository.find({ where: {isAdmin: false} });
+    const users = await this.usersRepository.find({
+      where: { isAdmin: false },
+    });
 
     const MAX_USERS = 65;
     if (users.length >= MAX_USERS) {
-      throw new HttpException('Max number of users reached.', HttpStatus.FORBIDDEN);
+      throw new HttpException(
+        'Max number of users reached.',
+        HttpStatus.FORBIDDEN,
+      );
     }
   }
 
@@ -266,6 +321,6 @@ export class UsersService {
    * @return {number} The number of votes for this team.
    */
   async getVotesFor(team_id: string): Promise<number> {
-    return await this.usersRepository.count({where: {voteId: team_id}});
+    return await this.usersRepository.count({ where: { voteId: team_id } });
   }
 }

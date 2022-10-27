@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -60,4 +61,10 @@ export class RegisterDto {
   @IsNotEmpty()
   @MinLength(7)
   password: string;
+
+  @IsBoolean()
+  imageAgreement: boolean;
+
+  @IsBoolean()
+  subscribeFormation: boolean;
 }

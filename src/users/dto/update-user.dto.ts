@@ -1,6 +1,5 @@
 import {
-  IsEmail,
-  IsNotEmpty,
+  IsBoolean,
   IsOptional,
   IsString,
   IsUrl,
@@ -49,4 +48,7 @@ export class UpdateUserDto {
   @MinLength(0)
   @MaxLength(2048)
   comment?: string;
+
+  @IsBoolean()
+  subscribeFormation: boolean;
 }

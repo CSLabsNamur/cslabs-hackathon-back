@@ -9,4 +9,6 @@ export class CreateUserDto {
   linkedIn?: string;
   comment?: string;
   password: string;
+  imageAgreement: boolean;
+  subscribeFormation: boolean;
 }

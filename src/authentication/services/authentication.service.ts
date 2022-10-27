@@ -48,9 +48,13 @@ export class AuthenticationService {
       createdUser.password = undefined;
 
       try {
-        await this.emailService.sendRegistrationConfirmationMail(createdUser.email)
+        await this.emailService.sendRegistrationConfirmationMail(
+          createdUser.email,
+        );
       } catch (err) {
-        console.error(`Failed to send confirmation email: ${createdUser.email}`);
+        console.error(
+          `Failed to send confirmation email: ${createdUser.email}`,
+        );
       }
 
       return createdUser;

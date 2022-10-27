@@ -40,7 +40,7 @@ export class EmailService {
     const iban = this.configService.get('HACKATHON_IBAN');
 
     const messagePlainText = `
-    Bienvenue à l’édition 2022 de notre Hackathon !
+    Bienvenue à l’édition 2023 de notre Hackathon !
     Site officiel : ${domain}
     
     Vous recevez ce mail car vous vous êtes inscrit sur notre site.
@@ -68,7 +68,7 @@ export class EmailService {
     `;
 
     const messageHtml = `
-    <h2>Bienvenue à l’édition 2022 de notre Hackathon !</h2>
+    <h2>Bienvenue à l’édition 2023 de notre Hackathon !</h2>
     <h5>Site officiel : <a href="${domain}">${domain}</a></h6>
     
     <p>Vous recevez ce mail car vous vous êtes inscrit sur notre site.</p>
@@ -99,7 +99,7 @@ export class EmailService {
 
     await this.sendMail({
       to: newUserEmail,
-      subject: 'CSLabs Hackathon "Le Bien Vieillir" - Bienvenue !',
+      subject: 'CSLabs Hackathon "Le Handicap" - Bienvenue !',
       text: messagePlainText,
       html: messageHtml,
     });
@@ -110,7 +110,7 @@ export class EmailService {
     const iban = this.configService.get('HACKATHON_IBAN');
     const encodedToken = Buffer.from(team.token).toString('base64');
     const messagePlainText = `
-        Bienvenue à l’édition 2022 de notre Hackathon !
+        Bienvenue à l’édition 2023 de notre Hackathon !
         Site officiel : ${domain}
         
         Vous recevez ce mail car on vous a envoyé une invitation à rejoindre une équipe :
@@ -137,7 +137,7 @@ export class EmailService {
         le discord officiel du Hackathon (https://discord.gg/Jf2Dht8).
         `;
     const messageHtml = `
-        <h2>Bienvenue à l’édition 2022 de notre Hackathon !</h1>
+        <h2>Bienvenue à l’édition 2023 de notre Hackathon !</h1>
         <h5>Site officiel : <a href="${domain}">${domain}</a></h6>
         
         <p>Vous recevez ce mail car l’on vous a envoyé une invitation à rejoindre une équipe :</p>
@@ -172,7 +172,7 @@ export class EmailService {
         `;
     await this.sendMail({
       to: newMemberEmail,
-      subject: 'CSLabs Hackathon "Le Bien Vieillir" - Invitation',
+      subject: 'CSLabs Hackathon "Le Handicap" - Invitation',
       text: messagePlainText,
       html: messageHtml,
     });
@@ -182,7 +182,7 @@ export class EmailService {
     const domain = this.configService.get('FRONTEND_DOMAIN');
     await this.sendMail({
       to: user.email,
-      subject: 'CSLabs Hackathon "Le Bien Vieillir" - Réinitialiser le mot de passe',
+      subject: 'CSLabs Hackathon "Le Handicap" - Réinitialiser le mot de passe',
       text: `
         Un nouveau mot de passe a été demandé pour l'utilisateur ${user.email} du site ${domain}.
         Si cette demande est de votre initiative, suivez ce lien afin de définir un nouveau mot de passe pour votre compte :
@@ -194,7 +194,7 @@ export class EmailService {
   async sendAdminAnnounce(subject: string, announce: string, emails: string[]) {
     await Promise.all(emails.map((email) => this.sendMail({
         to: email,
-        subject: `CSLabs Hackathon "Le Bien Vieillir" - IMPORTANT : ${subject}`,
+        subject: `CSLabs Hackathon "Le Handicap" - IMPORTANT : ${subject}`,
         text: announce,
       }))
     );
