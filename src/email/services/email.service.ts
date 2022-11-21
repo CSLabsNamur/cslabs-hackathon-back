@@ -20,8 +20,11 @@ export class EmailService {
     this.nodemailerTransport = createTransport({
       service: configService.get('EMAIL_SERVICE'),
       auth: {
+        type: 'OAuth2',
         user: configService.get('EMAIL_USER'),
-        pass: configService.get('EMAIL_PASSWORD'),
+        clientId: configService.get('EMAIL_CLIENT_ID'),
+        clientSecret: configService.get('EMAIL_CLIENT_SECRET'),
+        refreshToken: configService.get('EMAIL_REFRESH_TOKEN'),
       },
     });
   }
