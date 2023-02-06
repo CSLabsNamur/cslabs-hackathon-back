@@ -143,14 +143,22 @@ export class TeamsService {
   async leave(userId: string): Promise<Team> {
     const user = await this.usersService.getById(userId);
     const team = user.team;
-    if (team.members.length < 2) {
-      return await this.delete(user, team.id);
-    }
     if (!team) {
       throw new HttpException('user has not any team.', HttpStatus.BAD_REQUEST);
     }
+
+    if (user.isTeamOwner && team.members.length > 1) {
+      throw new HttpException(
+        'you cannot leave users in a team without owner.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     await this.usersService.removeTeam(user);
     await this.updateValidity(team.id);
+    if (team.members.length < 2) {
+      return await this.delete(user, team.id);
+    }
     return team;
   }
 
