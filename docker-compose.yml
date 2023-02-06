@@ -35,6 +35,8 @@ services:
     build: .
     ports:
       - "5000:5000"
+    volumes:
+      - ./upload:/usr/src/app/upload
     env_file:
       - docker.env
     networks:
