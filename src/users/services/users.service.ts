@@ -158,7 +158,7 @@ export class UsersService {
   }
 
   async setTeam(user: User, team: Team) {
-    if (team.members.length > 4) {
+    if (team.members.length > 4 && !user.isAdmin) {
       throw new HttpException('team is full.', HttpStatus.BAD_REQUEST);
     }
     await this.usersRepository.update(user.id, { team });
