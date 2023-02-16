@@ -8,12 +8,14 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  IsLowercase,
 } from 'class-validator';
 
 /** Data Transfer Object handling the data that is needed for registering a new user. */
 export class RegisterDto {
   /** The email of the new user. */
   @IsEmail()
+  @IsLowercase()
   email: string;
 
   /** The first name of the new user */

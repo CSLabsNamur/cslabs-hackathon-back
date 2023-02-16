@@ -80,7 +80,7 @@ export class AuthenticationService {
     plainTextPassword: string,
   ): Promise<User> {
     try {
-      const user = await this.usersService.getByEmail(email);
+      const user = await this.usersService.getByEmail(email.toLowerCase());
       await AuthenticationService.verifyPassword(
         plainTextPassword,
         user.password,
@@ -126,7 +126,7 @@ export class AuthenticationService {
    * @param email - The email that receives the reset password link
    */
   public async sendPasswordResetMail(email: string) {
-    const user = await this.usersService.getByEmail(email);
+    const user = await this.usersService.getByEmail(email.toLowerCase());
     if (user) {
       const token = await this.getPasswordResetToken(user.id);
       await this.emailService.sendPasswordReset(user, token);
