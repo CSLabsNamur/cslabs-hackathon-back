@@ -43,7 +43,7 @@ export class EmailService {
     const iban = this.configService.get('HACKATHON_IBAN');
 
     const messagePlainText = `
-    Bienvenue à l’édition 2023 de notre Hackathon !
+    Bienvenue à l’édition 2024 de notre Hackathon !
     Site officiel : ${domain}
     
     Vous recevez ce mail car vous vous êtes inscrit sur notre site.
@@ -71,7 +71,7 @@ export class EmailService {
     `;
 
     const messageHtml = `
-    <h2>Bienvenue à l’édition 2023 de notre Hackathon !</h2>
+    <h2>Bienvenue à l’édition 2024 de notre Hackathon !</h2>
     <h5>Site officiel : <a href="${domain}">${domain}</a></h6>
     
     <p>Vous recevez ce mail car vous vous êtes inscrit sur notre site.</p>
@@ -113,7 +113,7 @@ export class EmailService {
     const iban = this.configService.get('HACKATHON_IBAN');
     const encodedToken = Buffer.from(team.token).toString('base64');
     const messagePlainText = `
-        Bienvenue à l’édition 2023 de notre Hackathon !
+        Bienvenue à l’édition 2024 de notre Hackathon !
         Site officiel : ${domain}
         
         Vous recevez ce mail car on vous a envoyé une invitation à rejoindre une équipe :
@@ -140,7 +140,7 @@ export class EmailService {
         le discord officiel du Hackathon (https://discord.gg/Jf2Dht8).
         `;
     const messageHtml = `
-        <h2>Bienvenue à l’édition 2023 de notre Hackathon !</h1>
+        <h2>Bienvenue à l’édition 2024 de notre Hackathon !</h1>
         <h5>Site officiel : <a href="${domain}">${domain}</a></h6>
         
         <p>Vous recevez ce mail car l’on vous a envoyé une invitation à rejoindre une équipe :</p>
