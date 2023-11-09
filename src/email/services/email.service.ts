@@ -3,7 +3,7 @@ import Mail from 'nodemailer/lib/mailer';
 import { ConfigService } from '@nestjs/config';
 import { createTransport } from 'nodemailer';
 import { Team } from '../../teams/entities/team.entity';
-import {User} from "../../users/entities/user.entity";
+import { User } from '../../users/entities/user.entity';
 
 /** Class handling business logic about emails */
 @Injectable()
@@ -195,11 +195,14 @@ export class EmailService {
   }
 
   async sendAdminAnnounce(subject: string, announce: string, emails: string[]) {
-    await Promise.all(emails.map((email) => this.sendMail({
-        to: email,
-        subject: `CSLabs Hackathon "Le Handicap" - IMPORTANT : ${subject}`,
-        text: announce,
-      }))
+    await Promise.all(
+      emails.map((email) =>
+        this.sendMail({
+          to: email,
+          subject: `CSLabs Hackathon "Le Handicap" - IMPORTANT : ${subject}`,
+          text: announce,
+        }),
+      ),
     );
   }
 }
