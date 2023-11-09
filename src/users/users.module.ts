@@ -16,12 +16,12 @@ import { EmailModule } from '../email/email.module';
     TypeOrmModule.forFeature([User]),
     MulterModule.register({
       limits: {
-        fileSize: 5*1024*1024,
+        fileSize: 5 * 1024 * 1024,
       },
       storage: diskStorage({
         destination: './upload',
         filename: pdfFileNameFactory,
-      })
+      }),
     }),
     forwardRef(() => AuthenticationModule),
     forwardRef(() => TeamsModule),

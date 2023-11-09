@@ -4,7 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
+  // OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
@@ -95,12 +95,11 @@ export class User {
   @Column({ type: 'boolean' })
   public subscribeFormation: boolean;
 
-  @Column({ type: 'bigint'})
+  @Column({ type: 'bigint' })
   public createdAt: number;
 
   @BeforeInsert()
   public setCreatedAt() {
     this.createdAt = Date.now();
   }
-
 }

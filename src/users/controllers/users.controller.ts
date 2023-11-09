@@ -6,8 +6,10 @@ import {
   Param,
   Post,
   Put,
-  Req, UploadedFile,
-  UseGuards, UseInterceptors,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JwtAuthenticationGuard } from '../../authentication/guards/jwt-authentication.guard';
 import { UsersService } from '../services/users.service';
@@ -16,9 +18,9 @@ import { AdminGuard } from '../../authentication/guards/admin.guard';
 import { RequestWithUser } from '../../authentication/request-with-user.interface';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { SetCautionDto } from '../dto/set-caution.dto';
-import {FileInterceptor} from "@nestjs/platform-express";
-import {pdfFileFilter} from "../../utils/multer/pdf-file.filter";
-import {SendAnnounceDto} from "../dto/send-announce.dto";
+import { FileInterceptor } from '@nestjs/platform-express';
+import { pdfFileFilter } from '../../utils/multer/pdf-file.filter';
+import { SendAnnounceDto } from '../dto/send-announce.dto';
 
 @Controller('users')
 export class UsersController {
@@ -58,10 +60,15 @@ export class UsersController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Post('upload-cv')
-  @UseInterceptors(FileInterceptor('file', {
-    fileFilter: pdfFileFilter,
-  }))
-  async uploadCv(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File) {
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: pdfFileFilter,
+    }),
+  )
+  async uploadCv(
+    @Req() request: RequestWithUser,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     await this.usersService.uploadCv(request.user.id, file);
   }
 

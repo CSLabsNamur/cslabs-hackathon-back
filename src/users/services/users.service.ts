@@ -95,7 +95,15 @@ export class UsersService {
   }
 
   async filterPrivateInformation(user: User): Promise<PublicUserInterface> {
-    const { id, firstName, lastName, github, linkedIn, paidCaution, isTeamOwner } = user;
+    const {
+      id,
+      firstName,
+      lastName,
+      github,
+      linkedIn,
+      paidCaution,
+      isTeamOwner,
+    } = user;
     const publicUser = {
       id,
       firstName,

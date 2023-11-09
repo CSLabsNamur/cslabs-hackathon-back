@@ -3,7 +3,8 @@ import {
   HttpException,
   HttpStatus,
   Inject,
-  Injectable, Logger,
+  Injectable,
+  Logger,
 } from '@nestjs/common';
 import { UsersService } from '../../users/services/users.service';
 import { CreateTeamDto } from '../dto/create-team.dto';
@@ -31,13 +32,13 @@ export class TeamsService {
   private logger = new Logger(TeamsService.name);
 
   async getAll(user: User): Promise<Team[] | PublicTeamInterface[]> {
-    let teams = await this.teamsRepository.find({ relations: ['members'] });
+    const teams = await this.teamsRepository.find({ relations: ['members'] });
 
     if (!user.isAdmin) {
       return await Promise.all(
         teams
           .filter((team) => team.valid)
-          .map(async (team) => this.filterPrivateInformation(team))
+          .map(async (team) => this.filterPrivateInformation(team)),
       );
     }
 
@@ -120,12 +121,14 @@ export class TeamsService {
   }
 
   async getVoteResults() {
-    const teams = await this.teamsRepository.find({where: {valid: true}});
-    return await Promise.all(teams.map(async (team) => ({
-      id: team.id,
-      name: team.name,
-      votes: await this.usersService.getVotesFor(team.id)
-    })));
+    const teams = await this.teamsRepository.find({ where: { valid: true } });
+    return await Promise.all(
+      teams.map(async (team) => ({
+        id: team.id,
+        name: team.name,
+        votes: await this.usersService.getVotesFor(team.id),
+      })),
+    );
   }
 
   async join(user: User, teamToken: string) {
@@ -174,7 +177,10 @@ export class TeamsService {
 
     const member = await this.usersService.getById(memberId);
     if (!user.isTeamOwner || user.team.id !== member.team.id) {
-      throw new HttpException('user has no authority to kick this team member.', HttpStatus.FORBIDDEN);
+      throw new HttpException(
+        'user has no authority to kick this team member.',
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     return await this.leave(memberId);
@@ -182,15 +188,19 @@ export class TeamsService {
 
   async updateValidity(teamId: string) {
     const team = await this.getById(teamId);
-    const valid = team.members.filter((member) => member.paidCaution).length > 0;
+    const valid =
+      team.members.filter((member) => member.paidCaution).length > 0;
     await this.teamsRepository.update(team.id, { valid });
   }
 
   async create(userID: string, teamData: CreateTeamDto): Promise<Team> {
     const { name, description, idea, invitations } = teamData;
     let user = await this.usersService.getById(userID);
-    if (await this.teamsRepository.findOneBy({name})) {
-      throw new HttpException("A team with this name already exists.", HttpStatus.BAD_REQUEST);
+    if (await this.teamsRepository.findOneBy({ name })) {
+      throw new HttpException(
+        'A team with this name already exists.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     const team = await this.teamsRepository.create({
       name,
@@ -229,13 +239,15 @@ export class TeamsService {
 
     await this.teamsRepository.save(team);
     user = await this.usersService.getById(userID);
-    await Promise.all(invitations.map(async (email) => {
-      try {
-        await this.invite(user, email);
-      } catch (error) {
-        this.logger.error(`Failed to invite [${email}].`);
-      }
-    }));
+    await Promise.all(
+      invitations.map(async (email) => {
+        try {
+          await this.invite(user, email);
+        } catch (error) {
+          this.logger.error(`Failed to invite [${email}].`);
+        }
+      }),
+    );
 
     return team;
   }
