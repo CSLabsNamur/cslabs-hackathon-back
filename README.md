@@ -26,23 +26,32 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+This repository is used to deploy the back-end of the main event, the [Hackathon](https://hackathon.cslabs.be/), of the [CSLabs](https://cslabs.be/).
 
+## Installation
+Install the dependencies using the following command:
 ```bash
 $ npm install
 ```
 
-## Running the app
+For updating dependencies and install, use the following command:
+```bash
+$ npm install -g npm-check-updates
+```
 
+## Running the app
+The app is containerized using docker. To run the app, you need to have docker installed on your machine. 
 ```bash
 # development
-$ npm run start
+$ docker-compose build
 
 # watch mode
-$ npm run start:dev
+$ docker-compose up # this will start the app in watch mode
+
+$ docker-compose up -d # this will start the app in watch mode in the background
 
 # production mode
-$ npm run start:prod
+$ docker-compose -f docker-compose.prod.yml up # this will start the app in production mode
 ```
 
 ## Test
