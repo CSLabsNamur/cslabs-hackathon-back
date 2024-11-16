@@ -4,7 +4,7 @@ FROM node:20.9.0-alpine as base
 WORKDIR /usr/src/app
 
 COPY package*.json .
-RUN npm install
+RUN npm install --only=production
 
 FROM base as build
 
