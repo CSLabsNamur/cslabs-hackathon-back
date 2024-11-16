@@ -1,36 +1,35 @@
-version: "3"
 services:
-  hackathon2021_postgres:
+  hackathon_postgres:
     container_name: hackathon_postgres
-    image: postgres:latest
+    image: postgres:14
     ports:
       - "5432:5432"
     volumes:
-      - /data/postgres:/data/postgres
+      - /srv/data/hackathon/db:/var/lib/postgresql/data
     env_file:
       - docker.env
     networks:
-      - hackathon2021-network
+      - hackathon-network
     restart: on-failure
-    
-  hackathon2021_pgadmin:
+
+  hackathon_pgadmin:
     links:
-      - hackathon2021_postgres:postgres
+      - hackathon_postgres:postgres
     container_name: hackathon_pgadmin
     image: dpage/pgadmin4
     ports:
       - "8080:80"
     volumes:
-      - /data/pgadmin:/root/.pgadmin
+      - /srv/data/hackathon/pgadmin/servers.json:/pgadmin4/servers.json
     env_file:
       - docker.env
     networks:
-      - hackathon2021-network
+      - hackathon-network
     restart: on-failure
 
-  hackathon2021_backend:
+  hackathon_backend:
     links:
-      - hackathon2021_postgres:postgres
+      - hackathon_postgres:postgres
     container_name: hackathon_backend
     build: .
     ports:
@@ -40,7 +39,7 @@ services:
     env_file:
       - docker.env
     networks:
-      - hackathon2021-network
+      - hackathon-network
 
 networks:
-  hackathon2021-network:
+  hackathon-network:
