@@ -10,7 +10,7 @@ services:
       - docker.env
     networks:
       - hackathon-network
-    restart: on-failure
+    restart: unless-stopped
 
   hackathon_pgadmin:
     links:
@@ -25,7 +25,7 @@ services:
       - docker.env
     networks:
       - hackathon-network
-    restart: on-failure
+    restart: unless-stopped
 
   hackathon_backend:
     links:
@@ -40,6 +40,7 @@ services:
       - docker.env
     networks:
       - hackathon-network
+    restart: unless-stopped
 
 networks:
   hackathon-network:
