@@ -23,7 +23,7 @@ services:
     image: dpage/pgadmin4
     depends_on:
       hackathon_db:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "wget", "-O", "-", "http://localhost:80/misc/ping" ]
       interval: 60s
