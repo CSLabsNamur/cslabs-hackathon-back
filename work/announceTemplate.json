@@ -1,0 +1,370 @@
+{
+  "root": {
+    "type": "EmailLayout",
+    "data": {
+      "backdropColor": "#1bb17a",
+      "borderColor": null,
+      "borderRadius": 16,
+      "canvasColor": "#ffffff",
+      "textColor": "#242424",
+      "fontFamily": "MODERN_SANS",
+      "childrenIds": [
+        "block-1731962851882",
+        "block-1731964488003",
+        "block-1731970164497",
+        "block-1731965231861",
+        "block-1731966898488"
+      ]
+    }
+  },
+  "block-1731962851882": {
+    "type": "ColumnsContainer",
+    "data": {
+      "style": {
+        "padding": {
+          "top": 16,
+          "bottom": 16,
+          "right": 24,
+          "left": 24
+        }
+      },
+      "props": {
+        "columnsCount": 2,
+        "columnsGap": 16,
+        "columns": [
+          {
+            "childrenIds": [
+              "block-1731962858886"
+            ]
+          },
+          {
+            "childrenIds": [
+              "block-1731962860229"
+            ]
+          },
+          {
+            "childrenIds": []
+          }
+        ]
+      }
+    }
+  },
+  "block-1731962858886": {
+    "type": "Image",
+    "data": {
+      "style": {
+        "padding": {
+          "top": 16,
+          "bottom": 16,
+          "right": 24,
+          "left": 24
+        },
+        "textAlign": "center"
+      },
+      "props": {
+        "width": null,
+        "height": 100,
+        "url": "https://cslabs.be/wp-content/uploads/2024/06/Logo-CSLabs-Transparent.png",
+        "alt": "CSLabs Logo",
+        "linkHref": "https://cslabs.be",
+        "contentAlignment": "middle"
+      }
+    }
+  },
+  "block-1731962860229": {
+    "type": "Image",
+    "data": {
+      "style": {
+        "padding": {
+          "top": 16,
+          "bottom": 16,
+          "right": 24,
+          "left": 24
+        },
+        "textAlign": "center"
+      },
+      "props": {
+        "width": null,
+        "height": 100,
+        "url": "https://cslabs.be/wp-content/uploads/2024/11/logo.png",
+        "alt": "Hackathon 2025 Logo",
+        "linkHref": "https://hackathon.cslabs.be",
+        "contentAlignment": "middle"
+      }
+    }
+  },
+  "block-1731964488003": {
+    "type": "Heading",
+    "data": {
+      "props": {
+        "text": "{{subject}}",
+        "level": "h2"
+      },
+      "style": {
+        "fontWeight": "bold",
+        "textAlign": "center",
+        "padding": {
+          "top": 16,
+          "bottom": 16,
+          "right": 24,
+          "left": 24
+        }
+      }
+    }
+  },
+  "block-1731965231861": {
+    "type": "Divider",
+    "data": {
+      "style": {
+        "padding": {
+          "top": 16,
+          "bottom": 24,
+          "right": 0,
+          "left": 0
+        }
+      },
+      "props": {
+        "lineColor": "#CCCCCC"
+      }
+    }
+  },
+  "block-1731965261334": {
+    "type": "Text",
+    "data": {
+      "props": {
+        "text": "My new text block"
+      },
+      "style": {
+        "padding": {
+          "top": 16,
+          "bottom": 16,
+          "left": 24,
+          "right": 24
+        },
+        "fontWeight": "normal"
+      }
+    }
+  },
+  "block-1731965681779": {
+    "type": "ColumnsContainer",
+    "data": {
+      "style": {
+        "padding": {
+          "top": 16,
+          "bottom": 16,
+          "right": 0,
+          "left": 0
+        }
+      },
+      "props": {
+        "columnsCount": 3,
+        "columnsGap": 16,
+        "columns": [
+          {
+            "childrenIds": []
+          },
+          {
+            "childrenIds": []
+          },
+          {
+            "childrenIds": [
+              "block-1731965911369"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "block-1731965682887": {
+    "type": "ColumnsContainer",
+    "data": {
+      "style": {
+        "padding": {
+          "top": 16,
+          "bottom": 16,
+          "right": 0,
+          "left": 0
+        }
+      },
+      "props": {
+        "columnsCount": 3,
+        "columnsGap": 16,
+        "columns": [
+          {
+            "childrenIds": [
+              "block-1731966495140"
+            ]
+          },
+          {
+            "childrenIds": [
+              "block-1731966580492"
+            ]
+          },
+          {
+            "childrenIds": [
+              "block-1731966711732"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "block-1731965683971": {
+    "type": "ColumnsContainer",
+    "data": {
+      "style": {
+        "padding": {
+          "top": 16,
+          "bottom": 16,
+          "right": 0,
+          "left": 0
+        }
+      },
+      "props": {
+        "columnsCount": 3,
+        "columnsGap": 16,
+        "columns": [
+          {
+            "childrenIds": [
+              "block-1731966840594"
+            ]
+          },
+          {
+            "childrenIds": []
+          },
+          {
+            "childrenIds": []
+          }
+        ]
+      }
+    }
+  },
+  "block-1731965911369": {
+    "type": "Html",
+    "data": {
+      "style": {
+        "color": "#000000",
+        "fontSize": 10,
+        "textAlign": "center",
+        "padding": {
+          "top": 0,
+          "bottom": 0,
+          "right": 0,
+          "left": 0
+        }
+      },
+      "props": {
+        "contents": "<a href=\"https://www.facebook.com/ComputerScienceLabs\" style=\"color: white;\">\n<div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n<div style=\"transform: translateY(2px)\">\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-facebook\"><path d=\"M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z\"/></svg>\n</div>\n</div>\n</a>"
+      }
+    }
+  },
+  "block-1731966495140": {
+    "type": "Html",
+    "data": {
+      "style": {
+        "fontSize": 10,
+        "textAlign": "center",
+        "padding": {
+          "top": 0,
+          "bottom": 0,
+          "right": 0,
+          "left": 0
+        }
+      },
+      "props": {
+        "contents": "<a href=\"https://www.instagram.com/cslabs_namur\" style=\"color: white;\">\n<div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n<div style=\"transform: translateY(2px)\">\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-instagram\"><rect width=\"20\" height=\"20\" x=\"2\" y=\"2\" rx=\"5\" ry=\"5\"/><path d=\"M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z\"/><line x1=\"17.5\" x2=\"17.51\" y1=\"6.5\" y2=\"6.5\"/></svg>\n</div>\n</div>\n</a>"
+      }
+    }
+  },
+  "block-1731966580492": {
+    "type": "Html",
+    "data": {
+      "style": {
+        "fontSize": 10,
+        "textAlign": "center",
+        "padding": {
+          "top": 0,
+          "bottom": 0,
+          "right": 0,
+          "left": 0
+        }
+      },
+      "props": {
+        "contents": "<a href=\"https://www.linkedin.com/company/cslabs-namur\" style=\"color: white;\">\n<div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n<div style=\"transform: translateY(2px)\">\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-linkedin\"><path d=\"M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z\"/><rect width=\"4\" height=\"12\" x=\"2\" y=\"9\"/><circle cx=\"4\" cy=\"4\" r=\"2\"/></svg>\n</div>\n</div>\n</a>"
+      }
+    }
+  },
+  "block-1731966711732": {
+    "type": "Html",
+    "data": {
+      "style": {
+        "fontSize": 10,
+        "textAlign": "center",
+        "padding": {
+          "top": 0,
+          "bottom": 0,
+          "right": 0,
+          "left": 0
+        }
+      },
+      "props": {
+        "contents": "<a href=\"https://twitter.com/CSLabs\" style=\"color: white;\">\n<div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n<div style=\"transform: translateY(2px)\">\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-twitter\"><path d=\"M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z\"/></svg>\n</div>\n</div>\n</a>"
+      }
+    }
+  },
+  "block-1731966840594": {
+    "type": "Html",
+    "data": {
+      "style": {
+        "fontSize": 10,
+        "textAlign": "center",
+        "padding": {
+          "top": 0,
+          "bottom": 0,
+          "right": 0,
+          "left": 0
+        }
+      },
+      "props": {
+        "contents": "<a href=\"https://www.youtube.com/@CSLabs_Namur\" style=\"color: white;\">\n<div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n<div style=\"transform: translateY(2px)\">\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-youtube\"><path d=\"M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17\"/><path d=\"m10 15 5-3-5-3z\"/></svg>\n</div>\n</div>\n</a>"
+      }
+    }
+  },
+  "block-1731966898488": {
+    "type": "Html",
+    "data": {
+      "style": {
+        "fontSize": 10,
+        "textAlign": "center",
+        "padding": {
+          "top": 0,
+          "bottom": 24,
+          "right": 16,
+          "left": 16
+        }
+      },
+      "props": {
+        "contents": "<div style=\"display: flex; gap: 15px; justify-content: center; align-items: center\">\n  <a href=\"https://cslabs.be\" style=\"color: white;\">\n    <div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n      <div style=\"transform: translateY(2px)\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"\n             stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n             class=\"lucide lucide-house\">\n          <path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\" />\n          <path\n            d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\" />\n        </svg>\n      </div>\n    </div>\n  </a>\n  <a href=\"https://www.facebook.com/ComputerScienceLabs\" style=\"color: white;\">\n    <div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n      <div style=\"transform: translateY(2px)\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"\n             stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n             class=\"lucide lucide-facebook\">\n          <path d=\"M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z\" />\n        </svg>\n      </div>\n    </div>\n  </a>\n  <a href=\"https://www.instagram.com/cslabs_namur\" style=\"color: white;\">\n    <div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n      <div style=\"transform: translateY(2px)\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"\n             stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n             class=\"lucide lucide-instagram\">\n          <rect width=\"20\" height=\"20\" x=\"2\" y=\"2\" rx=\"5\" ry=\"5\" />\n          <path d=\"M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z\" />\n          <line x1=\"17.5\" x2=\"17.51\" y1=\"6.5\" y2=\"6.5\" />\n        </svg>\n      </div>\n    </div>\n  </a>\n  <a href=\"https://www.linkedin.com/company/cslabs-namur\" style=\"color: white;\">\n    <div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n      <div style=\"transform: translateY(2px)\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"\n             stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n             class=\"lucide lucide-linkedin\">\n          <path d=\"M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z\" />\n          <rect width=\"4\" height=\"12\" x=\"2\" y=\"9\" />\n          <circle cx=\"4\" cy=\"4\" r=\"2\" />\n        </svg>\n      </div>\n    </div>\n  </a>\n  <a href=\"https://twitter.com/CSLabs\" style=\"color: white;\">\n    <div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n      <div style=\"transform: translateY(2px)\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"\n             stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n             class=\"lucide lucide-twitter\">\n          <path\n            d=\"M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z\" />\n        </svg>\n      </div>\n    </div>\n  </a>\n  <a href=\"https://www.youtube.com/@CSLabs_Namur\" style=\"color: white;\">\n    <div style=\"width: 30px; background: #5f6368; border-radius: 50%;\">\n      <div style=\"transform: translateY(2px)\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\"\n             stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n             class=\"lucide lucide-youtube\">\n          <path\n            d=\"M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17\" />\n          <path d=\"m10 15 5-3-5-3z\" />\n        </svg>\n      </div>\n    </div>\n  </a>\n</div>\n"
+      }
+    }
+  },
+  "block-1731970164497": {
+    "type": "Text",
+    "data": {
+      "style": {
+        "fontSize": 16,
+        "fontWeight": "normal",
+        "textAlign": "center",
+        "padding": {
+          "top": 16,
+          "bottom": 24,
+          "right": 24,
+          "left": 24
+        }
+      },
+      "props": {
+        "text": "{{message}}"
+      }
+    }
+  }
+}

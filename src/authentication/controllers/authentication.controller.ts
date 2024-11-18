@@ -1,13 +1,5 @@
 import { AuthenticationService } from '../services/authentication.service';
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Req, UseGuards } from '@nestjs/common';
 import { RegisterDto } from '../dto/register.dto';
 import { RequestWithUser } from '../request-with-user.interface';
 import { LocalAuthenticationGuard } from '../guards/local-authentication.guard';
