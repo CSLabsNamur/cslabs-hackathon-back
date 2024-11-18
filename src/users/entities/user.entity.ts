@@ -1,12 +1,4 @@
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  // OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Team } from '../../teams/entities/team.entity';
 

@@ -20,6 +20,8 @@ import { EmailService } from '../../email/services/email.service';
 
 @Injectable()
 export class TeamsService {
+  private logger = new Logger(TeamsService.name);
+
   constructor(
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
@@ -28,8 +30,6 @@ export class TeamsService {
     @InjectRepository(Team)
     private readonly teamsRepository: Repository<Team>,
   ) {}
-
-  private logger = new Logger(TeamsService.name);
 
   async getAll(user: User): Promise<Team[] | PublicTeamInterface[]> {
     const teams = await this.teamsRepository.find({ relations: ['members'] });
