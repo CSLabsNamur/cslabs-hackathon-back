@@ -64,9 +64,6 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
           {
             loud: (context) => context.toUpperCase(),
           },
-          {
-            inlineCssEnabled: true,
-          },
         ),
         options: {
           strict: true,
