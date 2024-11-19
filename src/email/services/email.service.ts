@@ -18,11 +18,10 @@ export class EmailService {
     email: string;
   }) {
     const iban = this.configService.get('HACKATHON_IBAN');
-    const theme = this.configService.get('HACKATHON_THEME');
 
     return this.mailService.sendMail({
       to: user.email,
-      subject: `[CSLabs] Hackathon "${theme}" - Bienvenue !`,
+      subject: `[CSLabs] Hackathon - Bienvenue !`,
       template: 'registration-mail',
       context: {
         iban,
@@ -35,11 +34,10 @@ export class EmailService {
   async sendTeamInvitation(team: Team, newMemberEmail: string) {
     const iban = this.configService.get('HACKATHON_IBAN');
     const encodedToken = Buffer.from(team.token).toString('base64');
-    const theme = this.configService.get('HACKATHON_THEME');
 
     return this.mailService.sendMail({
       to: newMemberEmail,
-      subject: `[CSLabs] Hackathon "${theme}" - Invitation`,
+      subject: `[CSLabs] Hackathon - Invitation`,
       template: 'team-invitation-mail',
       context: {
         iban,
@@ -50,11 +48,9 @@ export class EmailService {
   }
 
   async sendPasswordReset(user: User, resetToken: string) {
-    const theme = this.configService.get('HACKATHON_THEME');
-
     return this.mailService.sendMail({
       to: user.email,
-      subject: `[CSLabs] Hackathon "${theme}" - Réinitialiser le mot de passe`,
+      subject: `[CSLabs] Hackathon - Réinitialiser le mot de passe`,
       template: 'password-reset-mail',
       context: {
         email: user.email,
@@ -64,12 +60,10 @@ export class EmailService {
   }
 
   async sendAdminAnnounce(subject: string, message: string, emails: string[]) {
-    const theme = this.configService.get('HACKATHON_THEME');
-
     for (const email of emails) {
       await this.mailService.sendMail({
         to: email,
-        subject: `[CSLabs] Hackathon "${theme}" - ${subject}`,
+        subject: `[CSLabs] Hackathon - ${subject}`,
         template: 'announce-mail',
         context: {
           subject,
