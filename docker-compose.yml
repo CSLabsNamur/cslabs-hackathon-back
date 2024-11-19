@@ -1,7 +1,7 @@
 services:
   hackathon_db:
     container_name: hackathon_db
-    image: postgres:14
+    image: postgres:17-alpine
     ports:
       - "5432:5432"
     healthcheck:
