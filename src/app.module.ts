@@ -55,10 +55,9 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         },
       },
       defaults: {
-        from: `"CSLabs' Hackathon Team" ${process.env.EMAIL_USER}`,
+        from: `"CSLabs Hackathon Team" ${process.env.EMAIL_USER}`,
         secure: true,
       },
-      preview: true,
       template: {
         dir: __dirname + '/templates',
         adapter: new HandlebarsAdapter(
