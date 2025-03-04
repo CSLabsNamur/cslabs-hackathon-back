@@ -1,17 +1,9 @@
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Team } from '../../teams/entities/team.entity';
 
 /**
- * TypeORM entity about an user
+ * TypeORM entity about a user
  */
 @Entity()
 export class User {
@@ -95,12 +87,11 @@ export class User {
   @Column({ type: 'boolean' })
   public subscribeFormation: boolean;
 
-  @Column({ type: 'bigint'})
+  @Column({ type: 'bigint' })
   public createdAt: number;
 
   @BeforeInsert()
   public setCreatedAt() {
     this.createdAt = Date.now();
   }
-
 }

@@ -1,16 +1,24 @@
-FROM node:16.15.1-alpine
+FROM node:20-alpine AS base
 
 # Create app directory
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package*.json .
+RUN npm install --omit=dev
+RUN npm install -D @nestjs/cli
 
-RUN npm install
+FROM base AS build
 
+WORKDIR /usr/src/app
+
+COPY --from=base /usr/src/app /usr/src/app
 COPY . .
 
+ENV NODE_ENV=production
+
 RUN npm run build
+RUN npm prune
 
 EXPOSE 5000
 
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "node", "dist/main.js" ]

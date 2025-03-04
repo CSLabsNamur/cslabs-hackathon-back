@@ -5,10 +5,10 @@ import { UsersService } from './services/users.service';
 import { UsersController } from './controllers/users.controller';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { TeamsModule } from '../teams/teams.module';
-import {MulterModule} from "@nestjs/platform-express";
-import {diskStorage} from "multer";
-import {pdfFileNameFactory} from "../utils/multer/pdf-file-name.factory";
-import {EmailModule} from "../email/email.module";
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { pdfFileNameFactory } from '../utils/multer/pdf-file-name.factory';
+import { EmailModule } from '../email/email.module';
 
 /** NestJs Module handling the users of the server */
 @Module({
@@ -16,12 +16,12 @@ import {EmailModule} from "../email/email.module";
     TypeOrmModule.forFeature([User]),
     MulterModule.register({
       limits: {
-        fileSize: 5*1024*1024,
+        fileSize: 5 * 1024 * 1024,
       },
       storage: diskStorage({
         destination: './upload',
         filename: pdfFileNameFactory,
-      })
+      }),
     }),
     forwardRef(() => AuthenticationModule),
     forwardRef(() => TeamsModule),

@@ -19,7 +19,7 @@ import { Team } from '../entities/team.entity';
 import { PublicTeamInterface } from '../public-team.interface';
 import { UpdateTeamDto } from '../dto/update-team.dto';
 import { InviteTeamDto } from '../dto/invite-team.dto';
-import { AdminGuard } from "../../authentication/guards/admin.guard";
+import { AdminGuard } from '../../authentication/guards/admin.guard';
 
 @Controller('teams')
 export class TeamsController {
@@ -27,7 +27,9 @@ export class TeamsController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Get()
-  async getAll(@Req() request: RequestWithUser): Promise<Team[] | PublicTeamInterface[]> {
+  async getAll(
+    @Req() request: RequestWithUser,
+  ): Promise<Team[] | PublicTeamInterface[]> {
     return await this.teamsService.getAll(request.user);
   }
 
@@ -59,7 +61,6 @@ export class TeamsController {
   ) {
     await this.teamsService.invite(request.user, invitationData.email);
   }
-
 
   @UseGuards(AdminGuard)
   @UseGuards(JwtAuthenticationGuard)

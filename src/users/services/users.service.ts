@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
@@ -95,7 +88,15 @@ export class UsersService {
   }
 
   async filterPrivateInformation(user: User): Promise<PublicUserInterface> {
-    const { id, firstName, lastName, github, linkedIn, paidCaution, isTeamOwner } = user;
+    const {
+      id,
+      firstName,
+      lastName,
+      github,
+      linkedIn,
+      paidCaution,
+      isTeamOwner,
+    } = user;
     const publicUser = {
       id,
       firstName,

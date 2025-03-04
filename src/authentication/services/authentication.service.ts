@@ -27,6 +27,31 @@ export class AuthenticationService {
     private readonly emailService: EmailService,
   ) {}
 
+  /** Return an hashed version of a password
+   * @param plainTextPassword - The initial password in plain text
+   * @return {string} - The hashed password
+   * @private
+   */
+  private static async hashPassword(plainTextPassword: string) {
+    return await bcrypt.hash(plainTextPassword, 10);
+  }
+
+  /** Compare a password with a hashed one
+   * @param plainTextPassword - plain text password
+   * @param hashedPassword - hashed password
+   * @private
+   * @throws {Error} The passwords must corresponds
+   */
+  private static async verifyPassword(
+    plainTextPassword: string,
+    hashedPassword: string,
+  ) {
+    const matching = await bcrypt.compare(plainTextPassword, hashedPassword);
+    if (!matching) {
+      throw new Error('Wrong password provided.');
+    }
+  }
+
   /** Register a new user
    * @param {RegisterDto} registrationData - Data of the new user
    * @return {User} - The new user
@@ -48,9 +73,11 @@ export class AuthenticationService {
       createdUser.password = undefined;
 
       try {
-        await this.emailService.sendRegistrationConfirmationMail(
-          createdUser.email,
-        );
+        await this.emailService.sendRegistrationConfirmationMail({
+          firstName: createdUser.firstName,
+          lastName: createdUser.lastName,
+          email: createdUser.email,
+        });
       } catch (err) {
         console.error(
           `Failed to send confirmation email: ${createdUser.email}`,
@@ -120,6 +147,8 @@ export class AuthenticationService {
     });
   }
 
+  // Helpers
+
   /** Send an email containing the link for resetting the password of the user associated to a specific email address.
    * The link is usable for a limited amount of time
    * If the email is not associated with any user, then this function does nothing.
@@ -159,8 +188,6 @@ export class AuthenticationService {
     }
   }
 
-  // Helpers
-
   /** Make a token asking a password reset
    * This token is signed by the server and can expire
    * @param {string} userId - The Id of the user that ask the token
@@ -175,30 +202,5 @@ export class AuthenticationService {
       secret: this.configService.get('JWT_SIGN_SECRET'),
       expiresIn: this.configService.get<number>('JWT_SIGN_EXPIRATION_TIME'),
     });
-  }
-
-  /** Return an hashed version of a password
-   * @param plainTextPassword - The initial password in plain text
-   * @return {string} - The hashed password
-   * @private
-   */
-  private static async hashPassword(plainTextPassword: string) {
-    return await bcrypt.hash(plainTextPassword, 10);
-  }
-
-  /** Compare a password with a hashed one
-   * @param plainTextPassword - plain text password
-   * @param hashedPassword - hashed password
-   * @private
-   * @throws {Error} The passwords must corresponds
-   */
-  private static async verifyPassword(
-    plainTextPassword: string,
-    hashedPassword: string,
-  ) {
-    const matching = await bcrypt.compare(plainTextPassword, hashedPassword);
-    if (!matching) {
-      throw new Error('Wrong password provided.');
-    }
   }
 }

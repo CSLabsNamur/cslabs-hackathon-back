@@ -12,6 +12,8 @@ documentation/
 #Environment variables:
 docker.env
 .env
+.env.*
+!.env.*.example
 
 # User-specific stuff:
 .idea/**/workspace.xml
