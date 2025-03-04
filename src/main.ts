@@ -24,4 +24,5 @@ async function bootstrap() {
 
   await app.listen(port ? port : 5000);
 }
+
 bootstrap().then(); // Starts the server

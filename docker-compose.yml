@@ -1,46 +1,59 @@
-version: "3"
 services:
-  hackathon2021_postgres:
-    container_name: hackathon_postgres
-    image: postgres:latest
+  hackathon_db:
+    container_name: hackathon_db
+    image: postgres:17-alpine
     ports:
       - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     volumes:
-      - /data/postgres:/data/postgres
+      - /srv/data/hackathon/db:/var/lib/postgresql/data
     env_file:
-      - docker.env
+      - .env.db
     networks:
-      - hackathon2021-network
-    restart: on-failure
-    
-  hackathon2021_pgadmin:
-    links:
-      - hackathon2021_postgres:postgres
+      - hackathon-network
+    restart: unless-stopped
+
+  hackathon_pgadmin:
     container_name: hackathon_pgadmin
     image: dpage/pgadmin4
+    depends_on:
+      hackathon_db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "-O", "-", "http://localhost:80/misc/ping" ]
+      interval: 60s
+      timeout: 10s
+      retries: 3
     ports:
       - "8080:80"
     volumes:
-      - /data/pgadmin:/root/.pgadmin
+      - /srv/data/hackathon/pgadmin/servers.json:/pgadmin4/servers.json
     env_file:
-      - docker.env
+      - .env.pgadmin
     networks:
-      - hackathon2021-network
-    restart: on-failure
+      - hackathon-network
+    restart: unless-stopped
 
-  hackathon2021_backend:
-    links:
-      - hackathon2021_postgres:postgres
+  hackathon_backend:
     container_name: hackathon_backend
     build: .
+    depends_on:
+      hackathon_db:
+        condition: service_healthy
     ports:
       - "5000:5000"
     volumes:
       - ./upload:/usr/src/app/upload
     env_file:
-      - docker.env
+      - .env.backend
     networks:
-      - hackathon2021-network
+      - hackathon-network
+    restart: unless-stopped
 
 networks:
-  hackathon2021-network:
+  hackathon-network:

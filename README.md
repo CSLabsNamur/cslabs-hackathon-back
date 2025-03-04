@@ -3,8 +3,9 @@
 </p>
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+
 [circleci-url]: https://circleci.com/gh/nestjs/nest
-  
+
   <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
     <p align="center">
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
@@ -26,21 +27,27 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-This repository is used to deploy the back-end of the main event, the [Hackathon](https://hackathon.cslabs.be/), of the [CSLabs](https://cslabs.be/).
+This repository is used to deploy the back-end of the main event, the [Hackathon](https://hackathon.cslabs.be/), of
+the [CSLabs](https://cslabs.be/).
 
 ## Installation
+
 Install the dependencies using the following command:
+
 ```bash
 $ npm install
 ```
 
 For updating dependencies and install, use the following command:
+
 ```bash
 $ npm install -g npm-check-updates
 ```
 
 ## Running the app
-The app is containerized using docker. To run the app, you need to have docker installed on your machine. 
+
+The app is containerized using docker. To run the app, you need to have docker installed on your machine.
+
 ```bash
 # development
 $ docker-compose build
@@ -69,7 +76,8 @@ $ npm run test:cov
 
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If
+you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
 ## Stay in touch
 
@@ -79,4 +87,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## License
 
-  Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

@@ -8,6 +8,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './utils/filters/http-exception.filter';
 import { EmailModule } from './email/email.module';
 import { TeamsModule } from './teams/teams.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 /** NestJS main module.
  * The App module handles the environment variables
@@ -20,6 +22,7 @@ import { TeamsModule } from './teams/teams.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: '.env.backend',
       validationSchema: Joi.object({
         FRONTEND_DOMAIN: Joi.string().required(),
         POSTGRES_HOST: Joi.string().required(),
@@ -34,13 +37,38 @@ import { TeamsModule } from './teams/teams.module';
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.number().required(),
         JWT_SIGN_SECRET: Joi.string().required(),
         JWT_SIGN_EXPIRATION_TIME: Joi.number().required(),
-        EMAIL_SERVICE: Joi.string().required(),
+        EMAIL_SMTP_SERVER: Joi.string().required(),
+        EMAIL_SMTP_USER: Joi.string().required(),
+        EMAIL_SMTP_PASSWORD: Joi.string().required(),
         EMAIL_USER: Joi.string().required(),
-        EMAIL_CLIENT_ID: Joi.string().required(),
-        EMAIL_CLIENT_SECRET: Joi.string().required(),
-        EMAIL_REFRESH_TOKEN: Joi.string().required(),
         HACKATHON_IBAN: Joi.string().required(),
+        HACKATHON_THEME: Joi.string().required(),
       }),
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.EMAIL_SMTP_SERVER,
+        secure: true,
+        auth: {
+          user: process.env.EMAIL_SMTP_USER,
+          pass: process.env.EMAIL_SMTP_PASSWORD,
+        },
+      },
+      defaults: {
+        from: `"CSLabs Hackathon Team" ${process.env.EMAIL_USER}`,
+        secure: true,
+      },
+      template: {
+        dir: __dirname + '/templates',
+        adapter: new HandlebarsAdapter(
+          {
+            loud: (context) => context.toUpperCase(),
+          },
+        ),
+        options: {
+          strict: true,
+        },
+      },
     }),
     DatabaseModule,
     AuthenticationModule,
